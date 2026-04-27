@@ -1,0 +1,94 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  # ── API: lint + typecheck + test ──────────────────────────────────────────
+  api:
+    name: API (Python)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/api
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: mhs
+          POSTGRES_PASSWORD: mhs
+          POSTGRES_DB: mhs_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://mhs:mhs@localhost:5432/mhs_test
+      DATABASE_URL_SYNC: postgresql://mhs:mhs@localhost:5432/mhs_test
+      API_ENV: test
+      JWT_SECRET: ci-test-secret
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        run: pip install uv==0.4.29
+
+      - name: Install dependencies
+        run: uv pip install --system -r requirements.txt
+
+      - name: Ruff lint
+        run: ruff check .
+
+      - name: Mypy typecheck
+        run: mypy . --ignore-missing-imports
+
+      - name: Run migrations
+        run: alembic upgrade head
+
+      - name: Pytest
+        run: pytest -v --tb=short
+
+  # ── Web: lint + typecheck + build ─────────────────────────────────────────
+  web:
+    name: Web (Next.js)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: ESLint
+        run: pnpm lint
+
+      - name: TypeScript check
+        run: pnpm tsc --noEmit
+
+      - name: Build
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000

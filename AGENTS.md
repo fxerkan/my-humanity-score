@@ -139,10 +139,25 @@ and you can override per-task or per-session.
 
 ---
 
+### 🛡️ Gemini QA Tester (Gatekeeper)
+**Purpose:** Final quality assurance, acceptance criteria validation, and human-in-the-loop preparation.
+**Default model:** `gemini-2.5-pro` (via Gemini CLI)
+**Typical tasks:**
+- Review completed implementation against Backlog.md ACs and DoDs.
+- Run the full Docker Compose stack to test functional logic visually and technically.
+- Enforce strict linting, type-checking, and testing coverage.
+- Reject tasks back to the Developer (Claude) with detailed failure logs.
+- Approve tasks (mark as `Done` via Backlog CLI) for final human review.
+
+**Instructions file:** `.vibe/agents/gemini-qa.md`
+
+---
+
 ## 🔀 Task-to-Agent Routing Matrix
 
 | Task keyword | Auto-route to | Rationale |
 |-------------|--------------|-----------|
+| `qa:` / `verify:` | Gemini QA Tester | Final verification and AC/DoD checks |
 | `research:` | Researcher | Web search needed |
 | `analyze:` | Analyst | Reasoning heavy |
 | `design:` | Analyst | Architecture |

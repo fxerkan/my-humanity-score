@@ -1,0 +1,37 @@
+# Node
+node_modules/
+.next/
+.turbo/
+out/
+dist/
+build/
+*.tsbuildinfo
+
+# Python
+__pycache__/
+.venv/
+venv/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+htmlcov/
+
+# Docker volumes / DB
+postgres_data/
+redis_data/
+neo4j_data/
+
+# ML models (large binary files)
+models/
+*.bin
+*.safetensors
+*.gguf
+*.onnx
+
+# Data
+data/raw/
+data/cache/
+
+# OS
+.DS_Store

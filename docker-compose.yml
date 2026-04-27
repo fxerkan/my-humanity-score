@@ -1,0 +1,120 @@
+services:
+  # ── PostgreSQL ─────────────────────────────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: mhs_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-mhs}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-mhs}
+      POSTGRES_DB: ${POSTGRES_DB:-mhs}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-mhs} -d ${POSTGRES_DB:-mhs}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # ── FastAPI ────────────────────────────────────────────────────────────────
+  api:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    container_name: mhs_api
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mhs}:${POSTGRES_PASSWORD:-mhs}@db:5432/${POSTGRES_DB:-mhs}
+      DATABASE_URL_SYNC: postgresql://${POSTGRES_USER:-mhs}:${POSTGRES_PASSWORD:-mhs}@db:5432/${POSTGRES_DB:-mhs}
+      REDIS_URL: redis://redis:6379/0
+      API_ENV: development
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Next.js ────────────────────────────────────────────────────────────────
+  web:
+    build:
+      context: .
+      dockerfile: docker/web.Dockerfile
+      target: dev
+    container_name: mhs_web
+    restart: unless-stopped
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8001
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      api:
+        condition: service_healthy
+
+  # ── Redis (optional — enable with: docker compose --profile cache up) ──────
+  redis:
+    image: redis:7-alpine
+    container_name: mhs_redis
+    restart: unless-stopped
+    profiles: ["cache", "full"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Celery worker (optional — enable with: docker compose --profile full up)
+  worker:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    container_name: mhs_worker
+    restart: unless-stopped
+    env_file: .env
+    profiles: ["full"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mhs}:${POSTGRES_PASSWORD:-mhs}@db:5432/${POSTGRES_DB:-mhs}
+      REDIS_URL: redis://redis:6379/0
+    command: celery -A celery_app worker --loglevel=info
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      - db
+      - redis
+
+  # ── Neo4j (optional — enable with: docker compose --profile graph up) ──────
+  neo4j:
+    image: neo4j:5-community
+    container_name: mhs_neo4j
+    restart: unless-stopped
+    profiles: ["graph", "full"]
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-mhs_neo4j_password}
+      NEO4J_PLUGINS: '["apoc"]'
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+
+volumes:
+  postgres_data:
+  redis_data:
+  neo4j_data:

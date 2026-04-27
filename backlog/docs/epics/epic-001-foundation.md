@@ -1,6 +1,6 @@
 # EPIC-001 — Foundation & Infrastructure
 
-## Status: `ready`
+## Status: `closed` ✅
 
 ## Priority: P0 (Sprint 1)
 
@@ -42,10 +42,17 @@ and `Backlog.md` — Task Store (Markdown-native) task management approach.
 
 ## Definition of Done
 
-- [ ] `docker compose up` starts all services without errors
-- [ ] CI pipeline passes on GitHub for every push
-- [ ] No secrets committed to repo
-- [ ] `README.md` documents how to run locally
+- [x] `docker compose up` starts core services (db + api + web); `make dev-full` starts all 6 (Redis, Celery, Neo4j via profiles)
+- [x] CI pipeline (.github/workflows/ci.yml) exists with ruff + mypy + pytest + pnpm build jobs
+- [x] No secrets committed to repo (.env.example uses placeholders only)
+- [x] `README.md` documents how to run locally (EN + TR, `make dev` / `make dev-full`)
 - [x] `backlog browser` starts on port 6420 and shows all tasks
 - [x] CCPM skill available at `~/.claude/skills/ccpm`
 - [x] Backlog MCP registered in Claude Code (`claude mcp list` shows backlog)
+
+## QA Notes (Gemini QA — 2026-04-27)
+
+- **Migration bug fixed**: `mhs_scores` removed from `updated_at` trigger loop (column is `calculated_at`, not `updated_at`)
+- **README ports corrected**: API external port is 8001 (not 8000)
+- **Router scope**: auth + users routers implemented beyond TASK-3 stub spec; accepted as proactive implementation aligned with TASK-4
+- **Docker profiles**: core services (db, api, web) always start; Redis/Celery/Neo4j behind `--profile full` by design

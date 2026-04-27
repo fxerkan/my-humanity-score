@@ -1,11 +1,11 @@
 ---
 id: TASK-2
 title: PostgreSQL Schema + Alembic Migrations
-status: In Progress
+status: Done
 assignee:
   - '@developer'
 created_date: '2026-04-27 13:41'
-updated_date: '2026-04-27 15:06'
+updated_date: '2026-04-27 16:43'
 labels:
   - epic001-foundation-&-infrastructure
   - sonnet
@@ -136,10 +136,27 @@ created_at TIMESTAMPTZ DEFAULT NOW()
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 `alembic upgrade head` creates all tables without errors
-- [ ] #2 `alembic downgrade -1` reverses cleanly
-- [ ] #3 All foreign keys have cascade rules defined
-- [ ] #4 Soft delete pattern (`deleted_at`) applied to `users`
-- [ ] #5 `updated_at` auto-updates via trigger on `users` and `activities`
-- [ ] #6 No plain-text tokens in `connected_platforms` (column clearly named `_encrypted`)
+- [x] #1 `alembic upgrade head` creates all tables without errors
+- [x] #2 `alembic downgrade -1` reverses cleanly
+- [x] #3 All foreign keys have cascade rules defined
+- [x] #4 Soft delete pattern (`deleted_at`) applied to `users`
+- [x] #5 `updated_at` auto-updates via trigger on `users` and `activities`
+- [x] #6 No plain-text tokens in `connected_platforms` (column clearly named `_encrypted`)
 <!-- AC:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+PostgreSQL schema and Alembic migrations implemented.
+
+Changes:
+- Migration 001_initial_schema.py creates 7 tables: users, mhs_scores, activities, connected_platforms, badges, groups, group_members
+- users: soft delete (deleted_at), all required columns per spec
+- connected_platforms: access_token_encrypted, refresh_token_encrypted (no plain-text tokens)
+- All FKs defined with CASCADE or RESTRICT rules
+- updated_at trigger applied to users, activities, groups
+- mhs_scores correctly excluded from updated_at trigger (uses calculated_at instead)
+- downgrade() reverses all tables and triggers in correct order
+
+QA fix applied: removed mhs_scores from trigger loop to prevent runtime error (column is calculated_at, not updated_at).
+<!-- SECTION:FINAL_SUMMARY:END -->

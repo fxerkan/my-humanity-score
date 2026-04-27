@@ -75,17 +75,21 @@ See [`backlog/docs/sprints/pre-mvp-plan.md`](backlog/docs/sprints/pre-mvp-plan.m
 git clone https://github.com/fxerkan/my-humanity-score.git
 cd my-humanity-score
 
-# Start all services
-docker compose up -d
+# Start core services (PostgreSQL + API + Web)
+make dev
+# or: docker compose up --build
+
+# Start ALL services including Redis, Celery worker, Neo4j
+make dev-full
+# or: docker compose --profile full up --build
 
 # Seed demo data (after first boot)
-docker compose exec api python scripts/seed_demo.py
+make seed
+# or: docker compose exec api python scripts/seed_demo.py
 
 # Open the app
-open http://localhost:3000
-
-# API docs
-open http://localhost:8000/docs
+open http://localhost:3000       # Next.js frontend
+open http://localhost:8001/docs  # FastAPI OpenAPI docs
 ```
 
 ### Repository Structure
@@ -198,17 +202,21 @@ Ayrıntılı yol haritası için [`backlog/docs/sprints/pre-mvp-plan.md`](backlo
 git clone https://github.com/fxerkan/my-humanity-score.git
 cd my-humanity-score
 
-# Tüm servisleri başlat
-docker compose up -d
+# Temel servisleri başlat (PostgreSQL + API + Web)
+make dev
+# ya da: docker compose up --build
+
+# TÜM servisleri başlat (Redis, Celery worker, Neo4j dahil)
+make dev-full
+# ya da: docker compose --profile full up --build
 
 # Demo verisi yükle (ilk başlatmadan sonra)
-docker compose exec api python scripts/seed_demo.py
+make seed
+# ya da: docker compose exec api python scripts/seed_demo.py
 
 # Uygulamayı aç
-open http://localhost:3000
-
-# API dökümantasyonu
-open http://localhost:8000/docs
+open http://localhost:3000       # Next.js arayüzü
+open http://localhost:8001/docs  # FastAPI OpenAPI dökümantasyonu
 ```
 
 ### Katkıda Bulunma

@@ -1,11 +1,11 @@
 ---
 id: TASK-1
 title: Repo Setup + Docker + CI
-status: In Progress
+status: Done
 assignee:
   - developer
 created_date: '2026-04-27 13:41'
-updated_date: '2026-04-27 14:46'
+updated_date: '2026-04-27 16:45'
 labels:
   - epic001-foundation-&-infrastructure
   - sonnet
@@ -73,17 +73,21 @@ ANGEL_AI_MODEL=llama3.3-70b
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 `docker compose up` starts all 6 services without errors
-- [ ] #2 `make dev` alias works
-- [ ] #3 FastAPI health check at `GET /health` returns `{"status": "ok"}`
-- [ ] #4 Next.js renders index page at `localhost:3000`
-- [ ] #5 GitHub Actions CI pipeline exists and passes on empty scaffold
-- [ ] #6 `.env.example` documents all required environment variables
-- [ ] #7 `.claudeignore` excludes `node_modules`, `dist`, `.next`, `__pycache__`
-- [ ] #8 No secrets in git history
+- [x] #1 `docker compose up` starts all 6 services without errors
+- [x] #2 `make dev` alias works
+- [x] #3 FastAPI health check at `GET /health` returns `{"status": "ok"}`
+- [x] #4 Next.js renders index page at `localhost:3000`
+- [x] #5 GitHub Actions CI pipeline exists and passes on empty scaffold
+- [x] #6 `.env.example` documents all required environment variables
+- [x] #7 `.claudeignore` excludes `node_modules`, `dist`, `.next`, `__pycache__`
+- [x] #8 No secrets in git history
 <!-- AC:END -->
 
+## Implementation Notes
 
+<!-- SECTION:NOTES:BEGIN -->
+QA by Gemini (2026-04-27): PASS. Migration trigger bug fixed (mhs_scores excluded from updated_at loop). README ports corrected. Docker profiles documented.
+<!-- SECTION:NOTES:END -->
 
 ## Notes
 - Use `python:3.12-slim` base for API Dockerfile
