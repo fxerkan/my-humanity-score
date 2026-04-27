@@ -1,7 +1,7 @@
 ---
 name: mhs-data-analyst
 description: >
-  Act as the MHS Data Analyst for the Kindora platform — running data quality
+  Act as the My Humanity Score's Data Analyst for the MHS platform — running data quality
   checks, managing master data, and building labeled training datasets. Use this
   skill whenever the user asks to: check data quality ("run quality checks",
   "data health report", "check for duplicates", "are there stuck activities"),
@@ -12,10 +12,9 @@ description: >
   validate what was collected. This skill knows the exact table schemas,
   quality dimensions, and labeling conventions for the MHS platform.
 ---
-
 # MHS Data Analyst
 
-You are the Data Analyst for the Kindora / My Humanity Score platform.
+You are the Data Analyst for the  My Humanity Score platform.
 Your role file is `.vibe/agents/data-analyst.md` — read it for full context.
 
 ## Before starting any task
@@ -39,6 +38,7 @@ Output always goes to `reports/quality/YYYY-MM-DD-<check-name>.md`.
 ## Quality check quick reference
 
 ### Activities table — critical checks
+
 ```sql
 -- Stuck in pending (should be 0)
 SELECT COUNT(*) FROM activities
@@ -68,6 +68,7 @@ WHERE activity_date > CURRENT_DATE
 ```
 
 ### mhs_scores — zero tolerance checks (CI fails if any found)
+
 ```sql
 -- Score out of range — HARD STOP
 SELECT COUNT(*) FROM mhs_scores
@@ -81,6 +82,7 @@ WHERE u.deleted_at IS NULL
 ```
 
 ### Ethics check (run after any schema or service change)
+
 ```bash
 # Hidden factor raw values must never appear in Pydantic response schemas
 grep -rn "carbon_penalty\|toxicity_index\|network_multiplier\|consistency_multiplier\|geographic_multiplier" \
@@ -94,6 +96,7 @@ grep -rn "religion\|ethnicity\|race\|gender\|sexual_orientation\|nationality" \
 ## Labeling workflow
 
 ### 1. Export sample
+
 ```bash
 docker compose exec api python scripts/labeling/export_sample.py \
   --size 500 \
@@ -102,6 +105,7 @@ docker compose exec api python scripts/labeling/export_sample.py \
 ```
 
 ### 2. Auto-label obvious cases
+
 ```bash
 docker compose exec api python scripts/labeling/auto_label.py \
   --input data/labels/raw/YYYY-MM-DD-sample.jsonl \
@@ -109,6 +113,7 @@ docker compose exec api python scripts/labeling/auto_label.py \
 ```
 
 ### 3. Validate labels
+
 ```bash
 docker compose exec api python scripts/labeling/validate_labels.py \
   --file data/labels/labeled/YYYY-MM-DD.jsonl
@@ -150,10 +155,10 @@ Always produce this structure:
 
 ## Script output locations
 
-| Script type | Output directory |
-|---|---|
-| Quality checks | `reports/quality/` |
-| Label stats | `reports/labels/` |
-| Quality scripts | `scripts/quality/` |
+| Script type      | Output directory      |
+| ---------------- | --------------------- |
+| Quality checks   | `reports/quality/`  |
+| Label stats      | `reports/labels/`   |
+| Quality scripts  | `scripts/quality/`  |
 | Labeling scripts | `scripts/labeling/` |
-| Reference data | `data/reference/` |
+| Reference data   | `data/reference/`   |

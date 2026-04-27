@@ -428,7 +428,7 @@ Son Aktiviteler:
 
 ### GitHub Repository Yapısı
 ```
-kindora/ (veya seçilen isim)
+My Humanity Score (MHS)/ (veya seçilen isim)
 ├── 📂 apps/
 │   ├── web/          # Next.js
 │   ├── mobile/       # React Native

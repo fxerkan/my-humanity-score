@@ -71,7 +71,7 @@ class BaseCrawler:
     rate_limit: int = 1        # requests per second
     retry_attempts: int = 3
     timeout: float = 10.0
-    user_agent = "Kindora-Bot/1.0 (+https://kindora.app/bot)"
+    user_agent = "My Humanity Score (MHS)-Bot/1.0 (+https://My Humanity Score (MHS).app/bot)"
 
     async def fetch(self, url: str) -> dict: ...
     def save_crawl_state(self, cursor: str, count: int) -> None: ...

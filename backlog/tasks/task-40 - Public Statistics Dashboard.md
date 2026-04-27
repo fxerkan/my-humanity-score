@@ -38,7 +38,7 @@ No individual user data. No authentication required. Beautiful and informative.
 
 ```
 /stats
-├── Hero: "Kindora by the numbers" + last-updated timestamp
+├── Hero: "My Humanity Score (MHS) by the numbers" + last-updated timestamp
 ├── Row 1 (4 metric cards):
 │   ├── Total verified activities
 │   ├── Total users

@@ -36,7 +36,7 @@ to identify which demo user's score to show.
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│  🌍 Kindora          [Demo: Elif Kaya ▼]     Pre-MVP    │
+│  🌍 My Humanity Score (MHS)          [Demo: Elif Kaya ▼]     Pre-MVP    │
 └──────────────────────────────────────────────────────────┘
 ```
 

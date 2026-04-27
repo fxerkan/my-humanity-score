@@ -1,32 +1,24 @@
 ---
 id: TASK-2
-milestone: "M1: Dev Environment"
-assignee: []
-title: "PostgreSQL Schema + Alembic Migrations"
-status: To Do
-priority: high
-labels: ["epic001-foundation-&-infrastructure", "sonnet", "developer"]
+title: PostgreSQL Schema + Alembic Migrations
+status: In Progress
+assignee:
+  - '@developer'
+created_date: '2026-04-27 13:41'
+updated_date: '2026-04-27 15:06'
+labels:
+  - epic001-foundation-&-infrastructure
+  - sonnet
+  - developer
+milestone: 'M1: Dev Environment'
 dependencies:
   - task-1
-acceptance_criteria:
-  - "`alembic upgrade head` creates all tables without errors"
-  - "`alembic downgrade -1` reverses cleanly"
-  - "All foreign keys have cascade rules defined"
-  - "Soft delete pattern (`deleted_at`) applied to `users`"
-  - "`updated_at` auto-updates via trigger on `users` and `activities`"
-  - "No plain-text tokens in `connected_platforms` (column clearly named `_encrypted`)"
-created_date: '2026-04-27 13:41'
-updated_date: '2026-04-27 13:41'
-mhs_epic: EPIC-001 Foundation & Infrastructure
-mhs_agent: Developer
-mhs_model: claude-sonnet-4-6
-mhs_estimated_tokens: 20000
-mhs_estimated_hours: 2
+priority: high
 ---
 
-# TASK-002 — PostgreSQL Schema + Alembic Migrations
-
 ## Description
+
+<!-- SECTION:DESCRIPTION:BEGIN -->
 Create the full PostgreSQL database schema from concept/MHS_KB_02_Technical.md
 and wire up Alembic for migrations. This schema is the source of truth for all
 backend models.
@@ -138,11 +130,16 @@ created_at TIMESTAMPTZ DEFAULT NOW()
 - Add `updated_at` trigger function for auto-update
 - Add indexes: `users(email)`, `users(username)`, `activities(user_id)`,
   `mhs_scores(user_id)`, `activities(verification_status)`
+<!-- SECTION:DESCRIPTION:END -->
+
+# TASK-002 — PostgreSQL Schema + Alembic Migrations
 
 ## Acceptance Criteria
-- [ ] `alembic upgrade head` creates all tables without errors
-- [ ] `alembic downgrade -1` reverses cleanly
-- [ ] All foreign keys have cascade rules defined
-- [ ] Soft delete pattern (`deleted_at`) applied to `users`
-- [ ] `updated_at` auto-updates via trigger on `users` and `activities`
-- [ ] No plain-text tokens in `connected_platforms` (column clearly named `_encrypted`)
+<!-- AC:BEGIN -->
+- [ ] #1 `alembic upgrade head` creates all tables without errors
+- [ ] #2 `alembic downgrade -1` reverses cleanly
+- [ ] #3 All foreign keys have cascade rules defined
+- [ ] #4 Soft delete pattern (`deleted_at`) applied to `users`
+- [ ] #5 `updated_at` auto-updates via trigger on `users` and `activities`
+- [ ] #6 No plain-text tokens in `connected_platforms` (column clearly named `_encrypted`)
+<!-- AC:END -->

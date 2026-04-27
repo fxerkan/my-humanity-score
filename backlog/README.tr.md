@@ -2,7 +2,7 @@
 
 > **English version:** [README.md](README.md)
 
-Bu rehber, My Humanity Score (MHS / Kindora) projesinde **Backlog.md**'nin Developer, Analyst, Tester, Data Crawler, Data Visualizer ve Reviewer gibi farklı roller tarafından nasıl kullanılacağını açıklar.
+Bu rehber, My Humanity Score (My Humanity Score (MHS)) projesinde **Backlog.md**'nin Developer, Analyst, Tester, Data Crawler, Data Visualizer ve Reviewer gibi farklı roller tarafından nasıl kullanılacağını açıklar.
 
 ---
 

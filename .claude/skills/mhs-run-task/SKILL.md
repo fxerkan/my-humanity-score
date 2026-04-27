@@ -1,7 +1,7 @@
 ---
 name: mhs-run-task
 description: >
-  Execute a My Humanity Score (MHS) backlog task end-to-end in the Kindora project.
+  Execute a My Humanity Score (MHS) backlog task end-to-end in the My Humanity Score (MHS) project.
   Use this skill whenever the user mentions running, starting, implementing, or working
   on a specific task (e.g., "run TASK-001", "implement task-004", "work on the auth task",
   "start the database schema task"). Also triggers when the user says "next task", "pick
@@ -13,7 +13,7 @@ description: >
 
 # MHS Task Execution
 
-You're implementing a feature for the Kindora / My Humanity Score platform.
+You're implementing a feature for the MHS /  My Humanity Score platform.
 This is a 100% free, open-source platform measuring positive human impact.
 Every task has a spec file with acceptance criteria you must satisfy.
 

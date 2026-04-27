@@ -2,7 +2,7 @@
 
 > **Turkish version:** [README.tr.md](README.tr.md)
 
-This guide covers how the My Humanity Score (MHS / Kindora) project uses **Backlog.md** for task management across all roles — Developer, Analyst, Tester, Data Crawler, Data Visualizer, and Reviewer.
+This guide covers how the My Humanity Score (My Humanity Score (MHS)) project uses **Backlog.md** for task management across all roles — Developer, Analyst, Tester, Data Crawler, Data Visualizer, and Reviewer.
 
 ---
 

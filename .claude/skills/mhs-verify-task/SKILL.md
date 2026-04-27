@@ -1,7 +1,7 @@
 ---
 name: mhs-verify-task
 description: >
-  Verify that a completed MHS / Kindora backlog task satisfies all its acceptance
+  Verify that a completed My Humanity Score (MHS) backlog task satisfies all its acceptance
   criteria. Use this skill whenever the user wants to check, verify, validate, or
   QA a task implementation ("did task-004 pass?", "verify the auth task", "check
   acceptance criteria for task-006", "is TASK-002 done?", "review what was built",
@@ -15,7 +15,7 @@ description: >
 # MHS Task Acceptance Verification
 
 You're verifying that an implemented feature meets its acceptance criteria
-for the Kindora / My Humanity Score platform.
+for the MHS /  My Humanity Score platform.
 
 ## Step 1 — Read the task spec
 

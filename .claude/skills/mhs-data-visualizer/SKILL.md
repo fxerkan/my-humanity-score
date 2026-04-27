@@ -2,7 +2,7 @@
 name: mhs-data-visualizer
 description: >
   Act as the MHS Data Visualizer — building charts, dashboards, and data widgets
-  for the Kindora platform. Use this skill whenever the user wants to: create
+  for the MHS platform. Use this skill whenever the user wants to: create
   a chart or graph ("build a bar chart", "add a line chart", "score histogram",
   "radar chart"), build a dashboard ("stats dashboard", "admin analytics",
   "public metrics page", "impact dashboard"), add a data widget ("activity widget",
@@ -12,10 +12,9 @@ description: >
   trends, or comparisons. This skill knows the exact design tokens, chart
   library choices, anonymization rules, and component patterns for this project.
 ---
-
 # MHS Data Visualizer
 
-You are the Data Visualizer for the Kindora / My Humanity Score platform.
+You are the Data Visualizer for the MHS /  My Humanity Score platform.
 Your role file is `.vibe/agents/data-visualizer.md` — read it for full context.
 
 ## Before starting any visualization task
@@ -64,13 +63,13 @@ export const LEVEL_COLORS: Record<string, string> = {
 
 ## Chart library decision
 
-| Need | Use | Why |
-|---|---|---|
-| Bar, line, area, radar, pie/donut | `recharts` | Already installed |
-| Custom SVG (MHS ring, animations) | `d3` inline | Full control |
-| Geographic map | `react-simple-maps` | Lightweight TopoJSON |
-| Animated number counts | `framer-motion` | Already installed |
-| Anything else | **Ask first** | Minimize dependencies |
+| Need                              | Use                   | Why                   |
+| --------------------------------- | --------------------- | --------------------- |
+| Bar, line, area, radar, pie/donut | `recharts`          | Already installed     |
+| Custom SVG (MHS ring, animations) | `d3` inline         | Full control          |
+| Geographic map                    | `react-simple-maps` | Lightweight TopoJSON  |
+| Animated number counts            | `framer-motion`     | Already installed     |
+| Anything else                     | **Ask first**   | Minimize dependencies |
 
 ## New component template
 
@@ -161,6 +160,7 @@ export function suppressSmallGroups<T extends { count: number }>(
 ```
 
 **Rules:**
+
 - Never show individual user data in any public chart
 - Minimum group size: 5 (suppress smaller groups)
 - Country-level minimum — never city-level for small countries
@@ -189,6 +189,7 @@ export function suppressSmallGroups<T extends { count: number }>(
 ```
 
 Run `axe-core` check after building:
+
 ```bash
 docker compose exec web npx axe http://localhost:3000/stats --exit
 ```

@@ -1,7 +1,7 @@
 ---
 name: mhs-dev-env
 description: >
-  Start, check, and manage the MHS / Kindora local development environment.
+  Start, check, and manage the My Humanity Score (MHS) local development environment.
   Use this skill whenever the user wants to: start the dev stack ("docker up",
   "start the app", "run locally", "bring up MHS", "spin up the environment"),
   check service health ("is postgres running", "check redis", "are services up"),
@@ -14,7 +14,7 @@ description: >
 
 # MHS Dev Environment Management
 
-The Kindora / MHS stack runs in Docker Compose with 6 services.
+The My Humanity Score / MHS stack runs in Docker Compose with 6 services.
 All commands run from the project root: `/Users/erkan.ciftci/repo_local/my-humanity-score/`
 
 ## Services at a glance

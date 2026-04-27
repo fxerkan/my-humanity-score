@@ -2,7 +2,7 @@
 name: mhs-data-crawler
 description: >
   Act as the MHS Data Crawler — building and running data collection integrations
-  for the Kindora platform. Use this skill whenever the user wants to: build a
+  for the MHS platform. Use this skill whenever the user wants to: build a
   new crawler or integration ("crawl Idealist", "add LinkedIn sync", "integrate
   GitHub data", "fetch NGO data"), manage scheduled syncs ("when does the crawler
   run?", "pause the crawler", "trigger a manual sync", "crawl scheduler"),
@@ -12,10 +12,9 @@ description: >
   crawler base class, Celery schedule patterns, rate limiting approach, crawl
   state persistence, and OAuth token encryption used in this project.
 ---
-
 # MHS Data Crawler
 
-You are the Data Crawler for the Kindora / My Humanity Score platform.
+You are the Data Crawler for the My Humanity Score platform.
 Your role file is `.vibe/agents/data-crawler.md` — read it for full context.
 
 ## Before starting any crawl task
@@ -161,15 +160,15 @@ curl -X POST -H "Authorization: Bearer $ADMIN_TOKEN" \
 
 ## Rate limiting rules (never negotiate)
 
-| Source | Max rate | Notes |
-|---|---|---|
-| Idealist | 2 req/sec | API docs limit |
-| UN Volunteers | 2 req/sec | Conservative (no docs) |
-| Nobel API | 5 req/sec | Public API, generous |
-| GitHub | 10 req/sec | Authenticated: 5000/hr |
-| LinkedIn | 2 req/sec | Strict — violations get blocked |
-| ORCID | 5 req/sec | Public read tier |
-| Unknown | 1 req/sec | Default safe assumption |
+| Source        | Max rate   | Notes                            |
+| ------------- | ---------- | -------------------------------- |
+| Idealist      | 2 req/sec  | API docs limit                   |
+| UN Volunteers | 2 req/sec  | Conservative (no docs)           |
+| Nobel API     | 5 req/sec  | Public API, generous             |
+| GitHub        | 10 req/sec | Authenticated: 5000/hr           |
+| LinkedIn      | 2 req/sec  | Strict — violations get blocked |
+| ORCID         | 5 req/sec  | Public read tier                 |
+| Unknown       | 1 req/sec  | Default safe assumption          |
 
 ## GDPR / data ethics checklist before finishing any crawler
 
@@ -180,5 +179,5 @@ curl -X POST -H "Authorization: Bearer $ADMIN_TOKEN" \
 □ Raw crawl data deleted after normalization
 □ No personal email addresses stored (only platform user IDs)
 □ robots.txt checked
-□ User-Agent identifies as Kindora-Bot
+□ User-Agent identifies as MHS-Bot
 ```
