@@ -20,3 +20,20 @@ exclude = ["alembic/"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+addopts = "--tb=short"
+# Run with coverage: pytest --cov=. --cov-report=term-missing
+# (coverage flags are omitted here so pytest works without pytest-cov installed locally)
+
+[tool.coverage.run]
+# "." = apps/api/ (the CWD when pytest runs, both in Docker and in CI)
+source = ["."]
+omit = [
+    "tests/*",
+    "alembic/*",
+    "celery_app.py",      # Celery bootstrap — no logic to test here
+    "*/__pycache__/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+fail_under = 60   # Realistic target for Sprint 1 (scoring + auth + users)

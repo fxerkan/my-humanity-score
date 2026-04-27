@@ -58,8 +58,8 @@ jobs:
       - name: Run migrations
         run: alembic upgrade head
 
-      - name: Pytest
-        run: pytest -v --tb=short
+      - name: Pytest + coverage
+        run: pytest -v --cov=. --cov-report=term-missing
 
   # ── Web: lint + typecheck + build ─────────────────────────────────────────
   web:
@@ -91,4 +91,61 @@ jobs:
       - name: Build
         run: pnpm build
         env:
-          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_PUBLIC_API_URL: http://localhost:8001
+
+  # ── E2E: Playwright against full Docker Compose stack ─────────────────────
+  e2e:
+    name: E2E (Playwright)
+    runs-on: ubuntu-latest
+    needs: [api, web]
+    defaults:
+      run:
+        working-directory: apps/web
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install pnpm
+        run: corepack enable && corepack prepare pnpm@latest --activate
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Start full stack
+        run: |
+          cp ../../.env.example ../../.env
+          echo "JWT_SECRET=ci-e2e-secret" >> ../../.env
+          docker compose --profile full -f ../../docker-compose.yml up -d --build
+          # Wait for API to be healthy
+          timeout 120 bash -c 'until curl -sf http://localhost:8001/health; do sleep 3; done'
+        env:
+          COMPOSE_BAKE: false
+
+      - name: Run Playwright E2E tests
+        run: pnpm test:e2e
+        env:
+          CI: true
+          E2E_BASE_URL: http://localhost:3000
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/playwright-report/
+          retention-days: 7
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-screenshots
+          path: apps/web/test-results/
+          retention-days: 3
