@@ -1,0 +1,308 @@
+# .vibe/config.yml
+# Multi-AI Agent Configuration for My Humanity Score
+# This file controls which AI model handles which type of task.
+# Override per-task by adding `ai_agent:` and `ai_model:` to task frontmatter.
+
+version: "1.0"
+
+# ─────────────────────────────────────────
+# AI PROVIDER CONFIGURATION
+# ─────────────────────────────────────────
+providers:
+  anthropic:
+    models:
+      - id: claude-opus-4-6
+        alias: opus
+        context_window: 200000
+        cost_tier: expensive
+        strengths: [architecture, complex_reasoning, ethics_review]
+      - id: claude-sonnet-4-6
+        alias: sonnet
+        context_window: 200000
+        cost_tier: medium
+        strengths: [coding, review, general]
+      - id: claude-haiku-4-5-20251001
+        alias: haiku
+        context_window: 200000
+        cost_tier: cheap
+        strengths: [testing, boilerplate, fast_tasks]
+
+  openai:
+    models:
+      - id: gpt-4o
+        alias: gpt4o
+        context_window: 128000
+        cost_tier: medium
+        strengths: [coding, reasoning]
+      - id: gpt-4o-mini
+        alias: gpt4o-mini
+        context_window: 128000
+        cost_tier: cheap
+        strengths: [testing, simple_tasks]
+      - id: o3
+        alias: o3
+        context_window: 200000
+        cost_tier: expensive
+        strengths: [math, algorithm, architecture]
+      - id: o4-mini
+        alias: o4-mini
+        context_window: 200000
+        cost_tier: medium
+        strengths: [math, algorithm, coding]
+      - id: gpt-4o-search-preview
+        alias: gpt-search
+        context_window: 128000
+        cost_tier: medium
+        strengths: [research, web_search]
+
+  google:
+    models:
+      - id: gemini-2.5-pro
+        alias: gemini-pro
+        context_window: 1000000
+        cost_tier: medium
+        strengths: [research, large_context, web_search, analysis]
+      - id: gemini-2.5-flash
+        alias: gemini-flash
+        context_window: 1000000
+        cost_tier: cheap
+        strengths: [fast_tasks, boilerplate, large_context]
+      - id: gemini-2.0-flash
+        alias: gemini-flash-2
+        context_window: 1000000
+        cost_tier: cheap
+        strengths: [fast_tasks]
+
+  local:
+    models:
+      - id: llama-3.3-70b
+        alias: llama
+        provider: ollama
+        endpoint: http://localhost:11434
+        cost_tier: free
+        strengths: [privacy_sensitive, offline]
+      - id: mistral-7b
+        alias: mistral
+        provider: ollama
+        endpoint: http://localhost:11434
+        cost_tier: free
+        strengths: [fast_tasks, offline]
+
+# ─────────────────────────────────────────
+# AGENT ROLE → MODEL MAPPING
+# ─────────────────────────────────────────
+agents:
+  researcher:
+    description: "Research, competitive analysis, API documentation gathering"
+    default_model: gemini-pro
+    fallback_model: opus
+    instructions_file: .vibe/agents/researcher.md
+    tools: [web_search, file_read]
+    task_prefix: "research:"
+
+  analyst:
+    description: "PRD creation, architecture decisions, task decomposition"
+    default_model: opus
+    fallback_model: o3
+    instructions_file: .vibe/agents/analyst.md
+    tools: [file_read, file_write, bash]
+    task_prefix: "analyze:|design:|prd:"
+
+  developer:
+    description: "Feature implementation, bug fixes"
+    default_model: sonnet
+    fallback_model: gpt4o
+    instructions_file: .vibe/agents/developer.md
+    tools: [file_read, file_write, bash, git]
+    task_prefix: "implement:|fix:|migrate:|feat:"
+    cost_guard:
+      warn_after_tokens: 50000
+      stop_after_tokens: 150000
+
+  tester:
+    description: "Test writing, QA, test execution"
+    default_model: haiku
+    fallback_model: gpt4o-mini
+    instructions_file: .vibe/agents/tester.md
+    tools: [file_read, file_write, bash]
+    task_prefix: "test:|qa:|spec:"
+
+  reviewer:
+    description: "Code review, quality gates, ethics compliance"
+    default_model: sonnet
+    fallback_model: gpt4o
+    instructions_file: .vibe/agents/reviewer.md
+    tools: [file_read, bash]
+    task_prefix: "review:"
+
+  data_analyst:
+    description: "Master data management, data quality checks, dataset labeling"
+    default_model: opus
+    fallback_model: o3
+    instructions_file: .vibe/agents/data-analyst.md
+    tools: [file_read, file_write, bash, db_query]
+    task_prefix: "quality:|label:|mdm:|analyze:"
+    output_dir: reports/quality/
+    cost_guard:
+      warn_after_tokens: 60000
+      stop_after_tokens: 180000
+
+  data_crawler:
+    description: "Web/API data collection, OAuth integrations, scheduled sync"
+    default_model: gemini-pro
+    fallback_model: sonnet
+    instructions_file: .vibe/agents/data-crawler.md
+    tools: [file_read, file_write, bash, web_search, web_fetch]
+    task_prefix: "crawl:|integrate:|sync:|scrape:"
+    cost_guard:
+      warn_after_tokens: 80000
+      stop_after_tokens: 200000
+
+  data_visualizer:
+    description: "Charts, dashboards, data widgets — anonymized stats UI"
+    default_model: sonnet
+    fallback_model: gpt4o
+    instructions_file: .vibe/agents/data-visualizer.md
+    tools: [file_read, file_write, bash]
+    task_prefix: "visualize:|dashboard:|chart:|widget:"
+
+# ─────────────────────────────────────────
+# WORKFLOW PRESETS
+# ─────────────────────────────────────────
+workflows:
+  # Solo mode — one agent does everything (cheapest)
+  solo:
+    description: "Single agent handles full task lifecycle"
+    steps:
+      - agent: developer
+        actions: [implement, test]
+      - agent: reviewer
+        actions: [review]
+
+  # Standard — separate dev and test
+  standard:
+    description: "Developer implements, Tester verifies"
+    parallel_limit: 2
+    steps:
+      - agent: developer
+        actions: [implement]
+        output: code
+      - agent: tester
+        actions: [test]
+        depends_on: code
+      - agent: reviewer
+        actions: [review]
+        depends_on: [code, test_results]
+
+  # Full pipeline — research to deploy
+  full:
+    description: "Full pipeline with research and analysis"
+    parallel_limit: 3
+    steps:
+      - agent: researcher
+        actions: [research]
+        output: research_doc
+      - agent: analyst
+        actions: [prd, tasks]
+        depends_on: research_doc
+        output: task_list
+      - agent: developer
+        actions: [implement]
+        depends_on: task_list
+        output: code
+        parallel: true
+      - agent: tester
+        actions: [test]
+        depends_on: code
+        parallel: true
+      - agent: reviewer
+        actions: [review]
+        depends_on: [code, test_results]
+
+  # Research only
+  research:
+    description: "Research and analysis only — no code"
+    steps:
+      - agent: researcher
+        actions: [research, summarize]
+
+  # Data pipeline — quality + crawl + visualize
+  data_pipeline:
+    description: "Full data ingestion, quality check, and visualization cycle"
+    parallel_limit: 2
+    steps:
+      - agent: data_crawler
+        actions: [crawl, normalize]
+        output: raw_data
+      - agent: data_analyst
+        actions: [quality, label]
+        depends_on: raw_data
+        output: clean_data
+      - agent: data_visualizer
+        actions: [dashboard, chart]
+        depends_on: clean_data
+
+  # Data quality only
+  data_quality:
+    description: "Run data quality checks and produce report"
+    steps:
+      - agent: data_analyst
+        actions: [quality, report]
+
+  # Crawl + integrate only
+  crawl_only:
+    description: "Collect and normalize data from external sources"
+    steps:
+      - agent: data_crawler
+        actions: [crawl, integrate, normalize]
+      - agent: data_analyst
+        actions: [quality]
+
+# ─────────────────────────────────────────
+# COST GUARDS (Global)
+# ─────────────────────────────────────────
+cost_guards:
+  # Stop if a single session exceeds this many tokens
+  max_tokens_per_session: 200000
+  # Warn when approaching limit
+  warn_at_percent: 70
+  # Preferred cheap models for specific patterns
+  auto_downgrade:
+    - pattern: "write tests for"
+      use_model: haiku
+    - pattern: "generate boilerplate"
+      use_model: gemini-flash
+    - pattern: "fix typo"
+      use_model: haiku
+    - pattern: "update docs"
+      use_model: gemini-flash
+    - pattern: "quality check"
+      use_model: sonnet
+    - pattern: "generate chart"
+      use_model: sonnet
+    - pattern: "crawl data"
+      use_model: gemini-pro
+
+# ─────────────────────────────────────────
+# TOOL INTEGRATIONS
+# ─────────────────────────────────────────
+integrations:
+  backlog:
+    type: cli
+    command: backlog
+    task_dir: backlog/tasks/
+    epic_dir: backlog/epics/
+    feature_dir: backlog/features/
+    status_field: status
+    done_status: "done"
+
+  github:
+    issues_sync: true
+    pr_auto_create: false
+    branch_prefix: "feat/"
+
+  testing:
+    frontend: vitest
+    backend: pytest
+    e2e: playwright
+    coverage_threshold: 80

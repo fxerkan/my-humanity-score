@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KINDORA — My Humanity Score (MHS) Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,700;0,900;1,400&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --deep: #0F2433;
+  --navy: #1A3A4A;
+  --green: #2DC67D;
+  --gold: #F0B429;
+  --coral: #E84855;
+  --blue: #4A90E2;
+  --purple: #9B59B6;
+  --teal: #00B5AD;
+  --earth: #8B6B47;
+  --bg: #F4F7FB;
+  --white: #FFFFFF;
+  --border: #DDE8F0;
+  --text: #1A2B38;
+  --muted: #6B8EA0;
+  --glow-green: rgba(45,198,125,0.12);
+  --glow-gold: rgba(240,180,41,0.15);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* ─── HERO ─── */
+.hero {
+  background: var(--deep);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 80px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute; inset: 0;
+  background: 
+    radial-gradient(ellipse 80% 60% at 20% 50%, rgba(45,198,125,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 30%, rgba(74,144,226,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 40% at 50% 100%, rgba(240,180,41,0.04) 0%, transparent 50%);
+}
+
+.name-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(45,198,125,0.12);
+  border: 1px solid rgba(45,198,125,0.3);
+  color: var(--green);
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+  position: relative; z-index: 1;
+}
+
+h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(52px, 9vw, 96px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 0.95;
+  margin-bottom: 8px;
+  position: relative; z-index: 1;
+}
+h1 em { font-style: italic; color: var(--green); }
+
+.tagline {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: clamp(16px, 2.5vw, 22px);
+  color: rgba(255,255,255,0.45);
+  margin-bottom: 48px;
+  position: relative; z-index: 1;
+}
+
+.hero-cards {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  justify-content: center;
+  position: relative; z-index: 1;
+}
+
+.hero-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 20px 28px;
+  text-align: left;
+  min-width: 160px;
+  backdrop-filter: blur(8px);
+}
+.hc-label { font-size: 10px; color: rgba(255,255,255,0.35); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+.hc-value { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 600; color: #fff; }
+.hc-value.green { color: var(--green); }
+.hc-value.gold { color: var(--gold); }
+.hc-sub { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 4px; }
+
+.free-banner {
+  margin-top: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(240,180,41,0.1);
+  border: 1px solid rgba(240,180,41,0.3);
+  border-radius: 12px;
+  padding: 12px 24px;
+  color: var(--gold);
+  font-weight: 600;
+  font-size: 14px;
+  position: relative; z-index: 1;
+}
+
+/* ─── SECTION ─── */
+section { padding: 80px 0; }
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+.sh { text-align: center; margin-bottom: 56px; }
+.stag {
+  display: inline-block;
+  background: rgba(26,58,74,0.07);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  padding: 5px 14px; border-radius: 100px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; margin-bottom: 16px;
+}
+.sh h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(28px, 4vw, 46px);
+  font-weight: 700; color: var(--navy); line-height: 1.15;
+}
+.sh p { font-size: 16px; color: var(--muted); max-width: 560px; margin: 14px auto 0; line-height: 1.65; }
+
+/* ─── NAMES ─── */
+.names-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+@media(max-width:640px){ .names-grid { grid-template-columns: 1fr; } }
+
+.name-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 24px;
+  display: flex; gap: 16px; align-items: flex-start;
+  transition: all 0.25s;
+  cursor: default;
+}
+.name-card:hover { border-color: var(--green); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,0,0,0.07); }
+.name-card.featured { border-color: var(--green); background: linear-gradient(135deg, rgba(45,198,125,0.04) 0%, var(--white) 100%); }
+.name-rank { font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted); min-width:24px; padding-top:2px; }
+.name-main { font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:var(--navy); margin-bottom:4px; }
+.name-domain { font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--green); margin-bottom:8px; }
+.name-meaning { font-size:13px; color:var(--muted); line-height:1.5; }
+.name-tag { display:inline-block; margin-top:8px; padding:3px 10px; border-radius:6px; font-size:11px; font-weight:600; background:var(--glow-green); color:#1B8A55; border:1px solid rgba(45,198,125,0.2); }
+
+/* ─── BADGE ECOSYSTEM ─── */
+.badge-section { background: var(--navy); }
+.badge-section .sh h2 { color: #fff; }
+.badge-section .sh p { color: rgba(255,255,255,0.45); }
+.badge-section .stag { background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15); color:rgba(255,255,255,0.5); }
+
+.badge-layers { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+@media(max-width:768px){ .badge-layers { grid-template-columns: 1fr; } }
+
+.badge-layer {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px; padding: 28px;
+}
+.bl-num { font-family:'JetBrains Mono',monospace; font-size:11px; color:rgba(255,255,255,0.3); letter-spacing:0.08em; margin-bottom:12px; }
+.bl-title { font-family:'Fraunces',serif; font-size:20px; color:#fff; font-weight:700; margin-bottom:8px; }
+.bl-desc { font-size:13px; color:rgba(255,255,255,0.45); line-height:1.6; margin-bottom:18px; }
+
+.badges-row { display:flex; flex-wrap:wrap; gap:8px; }
+.badge-pill {
+  display:inline-flex; align-items:center; gap:6px;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 100px; padding: 6px 12px;
+  font-size: 12px; color: rgba(255,255,255,0.8); font-weight:500;
+  white-space:nowrap;
+}
+.badge-pill.gold { background:rgba(240,180,41,0.12); border-color:rgba(240,180,41,0.25); color:var(--gold); }
+.badge-pill.green { background:rgba(45,198,125,0.12); border-color:rgba(45,198,125,0.25); color:var(--green); }
+.badge-pill.red { background:rgba(232,72,85,0.12); border-color:rgba(232,72,85,0.2); color:#FF6B75; }
+
+/* ─── ANGEL AI ─── */
+.angel-grid { display:grid; grid-template-columns: 1fr 1fr; gap:24px; align-items:start; }
+@media(max-width:768px){ .angel-grid { grid-template-columns:1fr; } }
+
+.angel-card {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px; padding: 32px;
+}
+.angel-card.guardian { border-top: 3px solid var(--coral); }
+.angel-card.mentor { border-top: 3px solid var(--gold); }
+.angel-card.chat { border-top: 3px solid var(--green); grid-column: 1/-1; }
+
+.ac-icon { font-size: 36px; margin-bottom: 16px; }
+.ac-title { font-family:'Fraunces',serif; font-size:22px; font-weight:700; color:var(--navy); margin-bottom:10px; }
+.ac-desc { font-size:14px; color:var(--muted); line-height:1.7; margin-bottom:20px; }
+
+.threat-list { list-style:none; }
+.threat-list li {
+  display:flex; align-items:flex-start; gap:10px;
+  padding: 10px 0; border-bottom: 1px solid var(--border);
+  font-size:13px; color:var(--text); line-height:1.5;
+}
+.threat-list li:last-child { border-bottom:none; }
+.tl-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px; }
+.tl-dot.red { background:var(--coral); }
+.tl-dot.orange { background:#F5A623; }
+.tl-dot.green { background:var(--green); }
+
+/* Chat mockup */
+.chat-window {
+  background: #F0F4F8;
+  border-radius: 16px;
+  overflow: hidden;
+  max-width: 520px; margin: 0 auto;
+}
+.chat-header {
+  background: var(--navy); padding: 16px 20px;
+  display:flex; align-items:center; gap:12px;
+}
+.chat-avatar { width:36px; height:36px; border-radius:50%; background:var(--gold); display:flex; align-items:center; justify-content:center; font-size:18px; }
+.chat-name { color:#fff; font-weight:600; font-size:15px; }
+.chat-status { color:var(--green); font-size:12px; }
+
+.chat-body { padding:20px; display:flex; flex-direction:column; gap:12px; }
+.msg { max-width:85%; padding:12px 16px; border-radius:16px; font-size:13px; line-height:1.6; }
+.msg.angel { background:#fff; border-radius:4px 16px 16px 16px; color:var(--text); align-self:flex-start; }
+.msg.user { background:var(--navy); color:#fff; border-radius:16px 4px 16px 16px; align-self:flex-end; }
+
+/* ─── DECLARATION ─── */
+.decl-grid { display:grid; grid-template-columns: repeat(3,1fr); gap:16px; }
+@media(max-width:768px){ .decl-grid { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:480px){ .decl-grid { grid-template-columns:1fr; } }
+
+.decl-card {
+  background:var(--white); border:1px solid var(--border);
+  border-radius:16px; padding:24px;
+  transition: all 0.25s;
+}
+.decl-card:hover { border-color:var(--blue); transform:translateY(-2px); box-shadow:0 8px 28px rgba(0,0,0,0.07); }
+.decl-icon { font-size:32px; margin-bottom:12px; display:block; }
+.decl-title { font-weight:600; font-size:15px; color:var(--navy); margin-bottom:8px; }
+.decl-items { list-style:none; }
+.decl-items li { font-size:12px; color:var(--muted); padding:3px 0; display:flex; align-items:center; gap:6px; }
+.decl-items li::before { content:'→'; color:var(--green); font-weight:700; }
+
+/* ─── GROUPS ─── */
+.groups-section { background: linear-gradient(135deg, #F0F7FF 0%, var(--bg) 100%); }
+
+.group-mockup {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 20px; overflow: hidden;
+  max-width: 480px; margin: 0 auto;
+}
+.gm-header { background: var(--navy); padding: 20px 24px; }
+.gm-name { color:#fff; font-family:'Fraunces',serif; font-size:20px; font-weight:700; margin-bottom:4px; }
+.gm-meta { color:rgba(255,255,255,0.45); font-size:12px; }
+.gm-body { padding:20px 24px; }
+.gm-stat { display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid var(--border); font-size:13px; }
+.gm-stat:last-child { border-bottom:none; }
+.gm-stat-label { color:var(--muted); }
+.gm-stat-val { font-weight:600; color:var(--navy); }
+.gm-challenge { background:var(--glow-green); border:1px solid rgba(45,198,125,0.2); border-radius:12px; padding:16px; margin-top:16px; }
+.gc-title { font-size:12px; font-weight:700; color:#1B8A55; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; }
+.gc-bar { height:8px; background:rgba(45,198,125,0.2); border-radius:100px; overflow:hidden; margin-bottom:6px; }
+.gc-fill { height:100%; background:var(--green); border-radius:100px; width:81%; }
+.gc-text { font-size:12px; color:#1B8A55; }
+
+/* ─── ETHICS ─── */
+.ethics-section { background: var(--deep); }
+.ethics-section .sh h2 { color:#fff; }
+.ethics-section .sh p { color:rgba(255,255,255,0.4); }
+.ethics-section .stag { background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15); color:rgba(255,255,255,0.4); }
+
+.ethics-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+@media(max-width:768px){ .ethics-grid { grid-template-columns:1fr; } }
+
+.ethic-card {
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px; padding:28px;
+}
+.en { font-family:'Fraunces',serif; font-size:48px; font-weight:900; color:rgba(255,255,255,0.08); line-height:1; margin-bottom:8px; }
+.et { font-size:15px; font-weight:600; color:#fff; margin-bottom:8px; }
+.ed { font-size:13px; color:rgba(255,255,255,0.4); line-height:1.65; }
+
+.no-discrimination {
+  background: rgba(240,180,41,0.08);
+  border: 1px solid rgba(240,180,41,0.2);
+  border-radius: 16px; padding: 28px; margin-top: 24px;
+  text-align:center;
+}
+.nd-title { font-family:'Fraunces',serif; font-size:20px; color:var(--gold); font-weight:700; margin-bottom:12px; }
+.nd-tags { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.nd-tag {
+  background:rgba(240,180,41,0.1); border:1px solid rgba(240,180,41,0.2);
+  border-radius:100px; padding:6px 14px; color:var(--gold);
+  font-size:12px; font-weight:500;
+}
+
+/* ─── ROADMAP ─── */
+.roadmap-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+@media(max-width:768px){ .roadmap-grid { grid-template-columns:repeat(2,1fr); } }
+@media(max-width:480px){ .roadmap-grid { grid-template-columns:1fr; } }
+
+.rm-card {
+  background:var(--white); border:1px solid var(--border);
+  border-radius:16px; padding:24px; position:relative;
+  overflow:hidden;
+}
+.rm-card::before {
+  content:''; position:absolute; top:0; left:0; right:0; height:3px;
+  background:var(--rm-color, var(--green));
+}
+.rm-card.active { border-color:var(--green); }
+.rm-phase { font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:8px; }
+.rm-emoji { font-size:28px; margin-bottom:10px; display:block; }
+.rm-title { font-family:'Fraunces',serif; font-size:18px; font-weight:700; color:var(--navy); margin-bottom:12px; }
+.rm-features { list-style:none; }
+.rm-features li { font-size:12px; color:var(--muted); padding:4px 0; display:flex; align-items:center; gap:6px; line-height:1.4; }
+.rm-features li::before { content:'·'; color:var(--green); font-weight:900; font-size:16px; flex-shrink:0; }
+
+/* ─── OPEN SOURCE ─── */
+.os-section { background: linear-gradient(135deg, #0A1F2E 0%, var(--deep) 100%); }
+.os-section .sh h2 { color:#fff; }
+.os-section .sh p { color:rgba(255,255,255,0.4); }
+.os-section .stag { background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.15); color:rgba(255,255,255,0.4); }
+
+.os-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+@media(max-width:640px){ .os-grid { grid-template-columns:1fr; } }
+
+.os-card {
+  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
+  border-radius:16px; padding:24px;
+}
+.os-icon { font-size:28px; margin-bottom:12px; display:block; }
+.os-title { font-size:15px; font-weight:600; color:#fff; margin-bottom:8px; }
+.os-desc { font-size:13px; color:rgba(255,255,255,0.4); line-height:1.6; }
+
+/* ─── FOOTER ─── */
+footer {
+  background: #060E14;
+  text-align:center; padding:60px 24px;
+  color:rgba(255,255,255,0.25); font-size:13px; line-height:1.8;
+}
+footer strong { color:rgba(255,255,255,0.7); }
+footer .tagline-footer { font-family:'Fraunces',serif; font-style:italic; font-size:18px; color:rgba(255,255,255,0.4); margin-bottom:16px; }
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(24px)} to{opacity:1;transform:translateY(0)} }
+.fu { animation:fadeUp 0.7s ease both; }
+.fu-1 { animation-delay:0.1s; }
+.fu-2 { animation-delay:0.2s; }
+.fu-3 { animation-delay:0.3s; }
+.fu-4 { animation-delay:0.4s; }
+
+@keyframes glow { 0%,100%{opacity:0.6} 50%{opacity:1} }
+.pulse-green { animation:glow 2.5s ease infinite; }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="name-badge fu">🌱 My Humanity Score (MHS) Platform Concept</div>
+  <h1 class="fu fu-1">KIND<em>ORA</em></h1>
+  <div class="tagline fu fu-2">"Every person's impact on humanity — finally measured."</div>
+
+  
+
+  <div class="hero-cards fu fu-3">
+    <div class="hero-card">
+      <div class="hc-label">İnsanllık Skoru</div>
+      <div class="hc-value green">850</div>
+      <div class="hc-sub">MHS Puanı</div>
+    </div>
+    <div class="hero-card">
+      <div class="hc-label">Seviye</div>
+      <div class="hc-value">7</div>
+      <div class="hc-sub">Awakening → Legend</div>
+    </div>
+    <div class="hero-card">
+      <div class="hc-label">Rozet Katmanı</div>
+      <div class="hc-value gold">4</div>
+      <div class="hc-sub">Ekosistem</div>
+    </div>
+    <div class="hero-card">
+      <div class="hc-label">Fiyat</div>
+      <div class="hc-value green">Ücretsiz</div>
+      <div class="hc-sub">Her zaman, herkes için</div>
+    </div>
+  </div>
+
+  <div>
+    &nbsp;
+  </div>
+  
+  <div class="badges-row" style="display:flex; flex-direction:column; gap:8px; align-items:flex-start;">
+    <span class="badge-pill red" style="display:block; width:100%;">🌍 Küresel bir sosyal iyilik hareketi yaratmak için yola çıkıyoruz</span>
+    <span class="badge-pill gold" style="display:block; width:100%;">Dünya genelinde insanlığın faydasına olan çalışmaların artırılmasını sağlayan sosyal platform konsepti.</span>
+    <span class="badge-pill pulse-green" style="display:block; width:100%;">MHS, insanlığın kolektif iyiliğe katkısını görünür kılar.</span>
+    
+    <span class="badge-pill green" style="display:block; width:100%;">Herkesin katkısı görünür, tanınır ve ödüllendirilir.</span>
+    <span class="badge-pill" style="display:block; width:100%;">✅ Tamamen ücretsiz</span>
+    <span class="badge-pill" style="display:block; width:100%;">🔓 Tümüyle açık kaynak</span>
+    <span class="badge-pill" style="display:block; width:100%;">Tamamen Şeffaf ve Adil</span>
+
+  </div>
+
+</div>
+
+<!-- PLATFORM NAMES -->
+<section>
+  <div class="container">
+    <div class="sh">
+      <div class="stag">İsim Alternatifleri</div>
+      <h2>Sosyal İyilik Platform İsim Önerisi</h2>
+      <p>Küresel telaffuz, domain müsaitliği ve marka gücü kriterleriyle değerlendirildi.</p>
+    </div>
+    <div class="names-grid">
+      <div class="name-card featured">
+        <div class="name-rank">01</div>
+        <div>
+          <div class="name-main">KINDORA</div>
+          <div class="name-domain">kindora.org · kindora.world</div>
+          <div class="name-meaning">Kind + Agora (antik Yunan kamusal meydanı) — "İyiliğin buluştuğu yer"</div>
+          <span class="name-tag">⭐ Önerilen #1</span>
+        </div>
+      </div>
+      <div class="name-card featured">
+        <div class="name-rank">02</div>
+        <div>
+          <div class="name-main">HUMANLY</div>
+          <div class="name-domain">humanly.world · humanly.org</div>
+          <div class="name-meaning">"İnsanca" — sade, evrensel, her dilde anlaşılır</div>
+          <span class="name-tag">⭐ Önerilen #2</span>
+        </div>
+      </div>
+      <div class="name-card">
+        <div class="name-rank">05</div>
+        <div>
+          <div class="name-main">İNSANLIK SKORUM</div>
+          <div class="name-domain">insanlikskorum.com</div>
+          <div class="name-meaning">Türkçe ana marka — Türkiye pazarı için güçlü</div>
+        </div>
+      </div>
+      <div class="name-card">
+        <div class="name-rank">10</div>
+        <div>
+          <div class="name-main">MY ANGELITY</div>
+          <div class="name-domain">myangelity.com</div>
+          <div class="name-meaning">Kişisel melek skoru konsepti — "My Angelity Score"</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BADGE ECOSYSTEM -->
+<section class="badge-section">
+  <div class="container">
+    <div class="sh">
+      <div class="stag">Rozet Ekosistemi</div>
+      <h2>4 Katmanlı Rozet Sistemi</h2>
+      <p>Seviyeden unvana, aktiviteden kolektife — her katkı görünür hale gelir.</p>
+    </div>
+    <div class="badge-layers">
+      <div class="badge-layer">
+        <div class="bl-num">KATMAN 1</div>
+        <div class="bl-title">Skor Seviyeleri</div>
+        <div class="bl-desc">Otomatik olarak verilen, MHS puanına göre güncellenen seviye rozetleri.</div>
+        <div class="badges-row">
+          <span class="badge-pill">🌱 Awakening</span>
+          <span class="badge-pill">🤝 Contributor</span>
+          <span class="badge-pill">🔄 Changemaker</span>
+          <span class="badge-pill">⚡ Catalyst</span>
+          <span class="badge-pill gold">🏆 Champion</span>
+          <span class="badge-pill gold">🌟 Luminary</span>
+          <span class="badge-pill gold">👑 Legend</span>
+        </div>
+      </div>
+      <div class="badge-layer">
+        <div class="bl-num">KATMAN 2</div>
+        <div class="bl-title">Aktivite Rozetleri</div>
+        <div class="bl-desc">Belirli aktiviteleri tamamlayarak kazanılan rozetler. Doğrulama zorunlu.</div>
+        <div class="badges-row">
+          <span class="badge-pill green">🩸 Kan Bağışcısı</span>
+          <span class="badge-pill green">💡 Mucit</span>
+          <span class="badge-pill green">🌳 Ağaç Dikici</span>
+          <span class="badge-pill">💻 Açık Kaynak</span>
+          <span class="badge-pill">🌊 Okyanus Koruyucu</span>
+          <span class="badge-pill">🍽️ Gıda Savaşçısı</span>
+          <span class="badge-pill">☮️ Barış Elçisi</span>
+          <span class="badge-pill">🧭 Mentor</span>
+          <span class="badge-pill">📖 Akademisyen</span>
+          <span class="badge-pill red">🆘 Kriz Kahramanı</span>
+        </div>
+      </div>
+      <div class="badge-layer">
+        <div class="bl-num">KATMAN 3</div>
+        <div class="bl-title">Özel Unvanlar</div>
+        <div class="bl-desc">Profile'da büyük rozet olarak görünen prestijli unvanlar. Kurul veya ortak kuruluş onayı gerektirir.</div>
+        <div class="badges-row">
+          <span class="badge-pill gold">👼 Angel</span>
+          <span class="badge-pill gold">💎 VIP Contributor</span>
+          <span class="badge-pill">🦋 Activist</span>
+          <span class="badge-pill">🤍 Volunteer</span>
+          <span class="badge-pill">🩺 Planet Doctor</span>
+          <span class="badge-pill">☮️ Peacemaker</span>
+          <span class="badge-pill gold">🏅 Nobel Laureate</span>
+          <span class="badge-pill red">🆘 Crisis Hero</span>
+          <span class="badge-pill">🔬 Researcher</span>
+          <span class="badge-pill green">🌱 Climate Guardian</span>
+        </div>
+      </div>
+      <div class="badge-layer">
+        <div class="bl-num">KATMAN 4</div>
+        <div class="bl-title">Grup & Kolektif</div>
+        <div class="bl-desc">Grupların kolektif performansına göre kazanılan topluluk rozetleri.</div>
+        <div class="badges-row">
+          <span class="badge-pill">🏘️ Impact Community</span>
+          <span class="badge-pill">🌍 Global Brigade</span>
+          <span class="badge-pill green">🔥 Active Team</span>
+          <span class="badge-pill green">🌿 Green Squad</span>
+          <span class="badge-pill">📣 Viral Impact</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ANGEL AI -->
+<section>
+  <div class="container">
+    <div class="sh">
+      <div class="stag">Angel AI</div>
+      <h2>Koruyucu Melek & Kişisel Mentör</h2>
+      <p>Açık kaynak LLM tabanlı Angel AI — hem güvenliğini korur, hem iyilik yapman için seni motive eder.</p>
+    </div>
+    <div class="angel-grid">
+      <div class="angel-card guardian">
+        <div class="ac-icon">🛡️</div>
+        <div class="ac-title">Guardian Modülü</div>
+        <div class="ac-desc">Proaktif güvenlik katmanı. Saldırıları, toksik içerikleri ve sahte profilleri tespit eder.</div>
+        <ul class="threat-list">
+          <li><div class="tl-dot red"></div>Toksik yorum & nefret söylemi → anında filtrele</li>
+          <li><div class="tl-dot red"></div>Sahte profil (bot, fake) → askıya al + kurul bildir</li>
+          <li><div class="tl-dot red"></div>Veri sızıntısı girişimi → oturumu kes + log</li>
+          <li><div class="tl-dot orange"></div>Fake aktivite beyanı → doğrulama sürecine al</li>
+          <li><div class="tl-dot orange"></div>Koordineli saldırı → toplu koruma modu</li>
+          <li><div class="tl-dot green"></div>Kişisel bilgi ifşa riski → uyar + engelle</li>
+        </ul>
+      </div>
+      <div class="angel-card mentor">
+        <div class="ac-icon">🧭</div>
+        <div class="ac-title">Mentor Modülü</div>
+        <div class="ac-desc">Aylık kişisel değerlendirme, benzer profil karşılaştırması ve zaman/kaynağa göre görev önerileri.</div>
+        <ul class="threat-list">
+          <li><div class="tl-dot green"></div>Aylık etki özeti & kazanım analizi</li>
+          <li><div class="tl-dot green"></div>Benzer profillerin aktivitelerinden ilham</li>
+          <li><div class="tl-dot green"></div>Kişiye özel "bu hafta yapabileceğin" görevler</li>
+          <li><div class="tl-dot green"></div>Dünya haberleriyle bağlantılı motivasyon</li>
+          <li><div class="tl-dot orange"></div>Hangi kategoride geride kaldın? analiz</li>
+          <li><div class="tl-dot orange"></div>Skor hedefi belirleme & takip</li>
+        </ul>
+      </div>
+      <div class="angel-card chat">
+        <div class="ac-title" style="text-align:center; margin-bottom:24px;">💬 Angel AI ile Konuşma Örneği</div>
+        <div class="chat-window">
+          <div class="chat-header">
+            <div class="chat-avatar">👼</div>
+            <div>
+              <div class="chat-name">Angel</div>
+              <div class="chat-status">● Aktif</div>
+            </div>
+          </div>
+          <div class="chat-body">
+            <div class="msg angel">Merhaba Zeynep! Bu ay sosyal etkide +24 puan kazandın 🎉 Ama çevre kategorin biraz geride. Sana yakın 3 etkinlik önersem bakar mısın?</div>
+            <div class="msg user">Evet, göster bakalım 🌱</div>
+            <div class="msg angel">1️⃣ 10 Mayıs — Yeşil İstanbul ağaç dikimi (+15 pt beklenen)<br>2️⃣ Bu hafta — Yakın kan bağış merkezi randevusu (+12 pt)<br>3️⃣ İklim Gönüllüleri grubuna katıl — kolektif etki!</div>
+            <div class="msg user">Kan bağışına gideyim 💉</div>
+            <div class="msg angel">Harika! Beyan formunu açıyorum sana. Randevu aldıktan sonra direkt buraya yükleyebilirsin 🤍</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DECLARATIONS -->
+<section style="background:#EFF4FA; border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
+  <div class="container">
+    <div class="sh">
+      <div class="stag">Beyan Sistemi</div>
+      <h2>Her İyiliği Sisteme Ekle</h2>
+      <p>Nobel'den Gazze sahası görevine, patentinden gıda bağışına — her katkı beyan edilip doğrulanabilir.</p>
+    </div>
+    <div class="decl-grid">
+      <div class="decl-card">
+        <span class="decl-icon">🆘</span>
+        <div class="decl-title">Kriz & Saha Görevi</div>
+        <ul class="decl-items">
+          <li>Gazze / Ukrayna / Sudan saha görevi</li>
+          <li>Afet müdahale gönüllülüğü</li>
+          <li>MSF, UNHCR, Kızılay onayı</li>
+          <li>Her görev = Crisis Hero rozeti</li>
+        </ul>
+      </div>
+      <div class="decl-card">
+        <span class="decl-icon">🏅</span>
+        <div class="decl-title">Resmi Ödüller</div>
+        <ul class="decl-items">
+          <li>Nobel Ödülü (otomatik doğrulama)</li>
+          <li>Pulitzer, Goldman, Aurora Prize</li>
+          <li>Ramon Magsaysay vb.</li>
+          <li>Nobel.org API entegrasyonu</li>
+        </ul>
+      </div>
+      <div class="decl-card">
+        <span class="decl-icon">🩺</span>
+        <div class="decl-title">İklim & Gezegen</div>
+        <ul class="decl-items">
+          <li>İklim bilim yayınları (DOI)</li>
+          <li>IPCC / WWF aktif çalışma</li>
+          <li>Carbon offset projesi</li>
+          <li>Planet Doctor rozeti</li>
+        </ul>
+      </div>
+      <div class="decl-card">
+        <span class="decl-icon">💡</span>
+        <div class="decl-title">Patent & İnovasyon</div>
+        <ul class="decl-items">
+          <li>Ulusal / uluslararası patent</li>
+          <li>Toplumsal fayda kategorisi</li>
+          <li>Patent ofisi belgesi ile doğrulama</li>
+          <li>Gıda, su, enerji çözümleri öncelikli</li>
+        </ul>
+      </div>
+      <div class="decl-card">
+        <span class="decl-icon">💚</span>
+        <div class="decl-title">Bağış & Destek</div>
+        <ul class="decl-items">
+          <li>Para / ayni bağış makbuzu</li>
+          <li>Burs verme / evlatlık edinme</li>
+          <li>Koruyucu ailelik</li>
+          <li>Kan / organ bağışı</li>
+        </ul>
+      </div>
+      <div class="decl-card">
+        <span class="decl-icon">🍽️</span>
+        <div class="decl-title">Gıda İsrafı Önleme</div>
+        <ul class="decl-items">
+          <li>Gıda bankası kurma / yönetme</li>
+          <li>Too Good To Go API entegrasyonu</li>
+          <li>Topluluk bahçesi / gıda ormanı</li>
+          <li>Kurumsal gıda israf projesi</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GROUPS -->
+<section class="groups-section">
+  <div class="container">
+    <div class="sh">
+      <div class="stag">Grup Sistemi</div>
+      <h2>Kendi Topluluğunu Kur</h2>
+      <p>Gruplar oluştur, skor paylaş, meydan oku, iletişim kur — kişisel gizliliğin her zaman senin elinde.</p>
+    </div>
+    <div class="group-mockup" style="margin:0 auto 40px;">
+      <div class="gm-header">
+        <div class="gm-name">🌿 İklim Gönüllüleri</div>
+        <div class="gm-meta">👥 847 üye · Açık Grup · Global</div>
+      </div>
+      <div class="gm-body">
+        <div class="gm-stat"><span class="gm-stat-label">Kolektif Ort. MHS</span><span class="gm-stat-val">742</span></div>
+        <div class="gm-stat"><span class="gm-stat-label">Bu ay aktif üye</span><span class="gm-stat-val">312</span></div>
+        <div class="gm-stat"><span class="gm-stat-label">Toplam aktivite</span><span class="gm-stat-val">1.840</span></div>
+        <div class="gm-stat"><span class="gm-stat-label">Grup rozetleri</span><span class="gm-stat-val">🌿 ⭐ 🌍</span></div>
+        <div class="gm-challenge">
+          <div class="gc-title">🎯 Mayıs Meydan Okuması — 1000 Ağaç</div>
+          <div class="gc-bar"><div class="gc-fill pulse-green"></div></div>
+          <div class="gc-text">813/1000 tamamlandı · 19 gün kaldı</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:16px; max-width:640px; margin:0 auto;">
+      <div style="text-align:center; padding:20px; background:var(--white); border-radius:16px; border:1px solid var(--border);">
+        <div style="font-size:28px; margin-bottom:8px;">🔓</div>
+        <div style="font-weight:600; color:var(--navy); font-size:14px;">Açık Grup</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">Herkes katılabilir</div>
+      </div>
+      <div style="text-align:center; padding:20px; background:var(--white); border-radius:16px; border:1px solid var(--border);">
+        <div style="font-size:28px; margin-bottom:8px;">🔐</div>
+        <div style="font-weight:600; color:var(--navy); font-size:14px;">Kapalı Grup</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">Davet ile katılım</div>
+      </div>
+      <div style="text-align:center; padding:20px; background:var(--white); border-radius:16px; border:1px solid var(--border);">
+        <div style="font-size:28px; margin-bottom:8px;">🌍</div>
+        <div style="font-weight:600; color:var(--navy); font-size:14px;">Tematik Grup</div>
+        <div style="font-size:12px; color:var(--muted); margin-top:4px;">İklim, barış, eğitim...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ETHICS -->
+<section class="ethics-section">
+  <div class="container">
+    <div class="sh">
+      <div class="stag">Etik Temel</div>
+      <h2>Hiçbir Zaman, Hiçbir Ayrım Yok.</h2>
+      <p>Platformun her satırı, her algoritması ve her politikası bu ilkelere dayanır.</p>
+    </div>
+    <div class="ethics-grid">
+      <div class="ethic-card">
+        <div class="en">01</div>
+        <div class="et">%100 Gönüllülük</div>
+        <div class="ed">Hiç kimse Kindora'yı kullanmaya zorlanamaz. Düşük skor hiçbir hak veya erişimi kısıtlamaz. Asla.</div>
+      </div>
+      <div class="ethic-card">
+        <div class="en">02</div>
+        <div class="et">Tam Şeffaf Algoritma</div>
+        <div class="ed">Tüm skor mantığı GitHub'da açık kaynak. Gizli faktörlerin varlığı açıklanır. Yıllık Şeffaflık Raporu.</div>
+      </div>
+      <div class="ethic-card">
+        <div class="en">03</div>
+        <div class="et">Düşük Skor Gizlidir</div>
+        <div class="ed">Skor yalnızca kullanıcının belirlediği kişilere görünür. Düşük skor utandırmaz — büyümeye davet eder.</div>
+      </div>
+      <div class="ethic-card">
+        <div class="en">04</div>
+        <div class="et">Kültürel Çoğulculuk</div>
+        <div class="ed">Tek bir kültür "iyi insan"ı tanımlamaz. Her bölgede yerel danışma kurulları ağırlıkları ayarlar.</div>
+      </div>
+      <div class="ethic-card">
+        <div class="en">05</div>
+        <div class="et">Veri Egemenliği</div>
+        <div class="ed">Verini istediğinde indir, istediğinde sil. 30 gün içinde kalıcı silme. Hükümetlerle paylaşım yok.</div>
+      </div>
+      <div class="ethic-card">
+        <div class="en">06</div>
+        <div class="et">Topluluk Yönetimi</div>
+        <div class="ed">Büyük kararlar topluluk oyu ile alınır. Algoritma değişiklikleri RFC süreciyle, etik kurul onayıyla.</div>
+      </div>
+    </div>
+
+    <div class="no-discrimination">
+      <div class="nd-title">🚫 Mutlak Ayrım Yasağı</div>
+      <div class="nd-tags">
+        <span class="nd-tag">🕌 Din / İnanç</span>
+        <span class="nd-tag">🌐 Dil / Etnik Köken</span>
+        <span class="nd-tag">🎨 Irk / Ten Rengi</span>
+        <span class="nd-tag">♀♂ Cinsiyet / LGBTQ+</span>
+        <span class="nd-tag">🗺️ Milliyet / Vatandaşlık</span>
+        <span class="nd-tag">♿ Engellilik</span>
+        <span class="nd-tag">🗳️ Siyasi Görüş</span>
+        <span class="nd-tag">💰 Ekonomik Durum</span>
+        <span class="nd-tag">🎓 Eğitim Seviyesi</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section>
+  <div class="container">
+    <div class="sh">
+      <div class="stag">Yol Haritası</div>
+      <h2>4 Fazda Küresel Platform</h2>
+    </div>
+    <div class="roadmap-grid">
+      <div class="rm-card active" style="--rm-color: var(--green)">
+        <div class="rm-phase">FAZ 1 · 2026</div>
+        <span class="rm-emoji">🌱</span>
+        <div class="rm-title">MVP</div>
+        <ul class="rm-features">
+          <li>Temel profil + kayıt anketi</li>
+          <li>Aktivite beyan sistemi</li>
+          <li>LinkedIn + GitHub OAuth</li>
+          <li>Temel rozet sistemi</li>
+          <li>Web + iOS beta</li>
+          <li>Açık kaynak GitHub yayını</li>
+          <li>Hedef: 100K üye</li>
+        </ul>
+      </div>
+      <div class="rm-card" style="--rm-color: var(--blue)">
+        <div class="rm-phase">FAZ 2 · 2027</div>
+        <span class="rm-emoji">🚀</span>
+        <div class="rm-title">Büyüme</div>
+        <ul class="rm-features">
+          <li>Angel AI v1 (Guardian)</li>
+          <li>Tam rozet + unvan sistemi</li>
+          <li>Grup sistemi</li>
+          <li>Nobel / Gazze özel akışlar</li>
+          <li>NGO API entegrasyonları</li>
+          <li>20 dil desteği</li>
+          <li>Hedef: 2M aktif</li>
+        </ul>
+      </div>
+      <div class="rm-card" style="--rm-color: var(--gold)">
+        <div class="rm-phase">FAZ 3 · 2028</div>
+        <span class="rm-emoji">⚡</span>
+        <div class="rm-title">Platform</div>
+        <ul class="rm-features">
+          <li>Angel AI v2 (Mentor)</li>
+          <li>Blockchain rozet (opsiyonel)</li>
+          <li>Hükümet ortaklıkları</li>
+          <li>Yıllık Global Humanity Report</li>
+          <li>Araştırma API (üniversiteler)</li>
+          <li>Bias audit sistemi</li>
+          <li>Hedef: 20M aktif</li>
+        </ul>
+      </div>
+      <div class="rm-card" style="--rm-color: var(--purple)">
+        <div class="rm-phase">FAZ 4 · 2030+</div>
+        <span class="rm-emoji">👑</span>
+        <div class="rm-title">Olgunluk</div>
+        <ul class="rm-features">
+          <li>Angel AI v3 (otonom)</li>
+          <li>Küresel etki haritası (canlı)</li>
+          <li>MHS Legacy (miras profilleri)</li>
+          <li>Tarihin büyük insancılları</li>
+          <li>Community DAO yönetimi</li>
+          <li>500M vizyon</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OPEN SOURCE -->
+<section class="os-section">
+  <div class="container">
+    <div class="sh">
+      <div class="stag">Açık Kaynak</div>
+      <h2>Topluluk Tarafından, Topluluk İçin</h2>
+      <p>Her satır kod, her algoritma değişikliği, her karar — herkese açık.</p>
+    </div>
+    <div class="os-grid">
+      <div class="os-card">
+        <span class="os-icon">📂</span>
+        <div class="os-title">AGPL-3.0 Lisansı</div>
+        <div class="os-desc">En güçlü copyleft lisansı. Kodu alıp kapatan olamaz. Forkla + kapat saldırısına karşı koruma.</div>
+      </div>
+      <div class="os-card">
+        <span class="os-icon">🗳️</span>
+        <div class="os-title">RFC Süreci</div>
+        <div class="os-desc">Her algoritma değişikliği önce RFC olarak yayınlanır. 14 gün yorum + etik kurul + açık oylama.</div>
+      </div>
+      <div class="os-card">
+        <span class="os-icon">💰</span>
+        <div class="os-title">Bağış Tabanlı</div>
+        <div class="os-desc">Open Collective + GitHub Sponsors + Mozilla/Ford Foundation hibeleri. Abonelik yok, reklam yok.</div>
+      </div>
+      <div class="os-card">
+        <span class="os-icon">🔍</span>
+        <div class="os-title">Şeffaf Algoritma</div>
+        <div class="os-desc">Skor motoru tam açık. Yıllık bias audit sonuçları kamuya yayınlanır. Bağımsız etik kurul denetler.</div>
+      </div>
+      <div class="os-card">
+        <span class="os-icon">🌍</span>
+        <div class="os-title">Topluluk Yönetimi</div>
+        <div class="os-desc">Büyük kararlar topluluk oyu ile. Etik kurul üyeleri kısmen seçimle belirlenir.</div>
+      </div>
+      <div class="os-card">
+        <span class="os-icon">🔬</span>
+        <div class="os-title">Araştırma Erişimi</div>
+        <div class="os-desc">Üniversiteler anonim toplu veriyi araştırma amacıyla ücretsiz kullanabilir (kullanıcı onayıyla).</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="tagline-footer">"Every person's impact on humanity — finally measured."</div>
+  <strong>My Humanity Score (MHS)</strong> — Platform Concept Document v2.0<br>
+  Hazırlayan: Erkan Çiftçi · Nisan 2026<br><br>
+  Tamamen ücretsiz · Açık kaynak · Ayrım yok · Community-driven
+</footer>
+
+</body>
+</html>

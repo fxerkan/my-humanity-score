@@ -1,0 +1,13 @@
+bu uygulamayı Claude Code ile geliştirebileceğim bir vibe-coding platformu oluşturmak istiyorum. Öyle ki AI ile geliştirmek istediğim tüm Feature'ları birer Epic, Feature ve Task olarak markdown formatında detaylı bir şekilde tanımlattırıp, sonrasında seçtiğim epic yada feature, task için AI agent tarafından ilgili kod geliştirmelerinin yapıldığı, paralelde analyst, tester gibi farklı rollerki agentlar tarafından yapılan geliştirmelerin test edilip, onaylandığı ve ilgili task'ın tamamlandı olarak işaretlenip sonraki seçeceğim task'a ait geliştirmelere geçeceği şekilde bir platforma ihtiyacım var.
+Bunu en kolay ve ekstra maliyet oluşturmadan hangi araç yada metdoloji ile yapabilirim?
+
+---
+
+https://github.com/fxerkan/my-humanity-score public bir repo oluşturdum ve senin hazırlamış olduğun tüm custom instructions, knowledge base vs. gibi dokümanları /concept adlı bir dizin altına koydum.
+
+Claude Code'a bu projenin içeriği, kapsamı amacı ve geliştirilmesi için gereken vibe-coding platformunu ilgili repo içerisinde kurup uygulamaya geçirebilmesini istiyorum.
+
+Öncelikle Plan mode da neler yapması gerektiğini planlayıp ardından vibe-coding ortamını hazırlayabilmesi için gereken tüm prompt ve içerikleri oluşturabilir misin (detaylı şekilde)?
+
+**ÖNEMLİ** Claude Code abonelik kotamın çok kısa sürede dolmaması ve alternatif diğer AI agent araçlarınıda (Cursor, CoPilot, Codex, Gemini vs.) kullanabilecek şekilde olmalı altyapı kesinlikle. hatta istersem farklı model ve AI agentlarını farklı iş tiplerine atayıp çalıştırabilecek şekilde olmalı. Örneğin ilgili feature'ın araştırılması ve analizi için Gemini ı kullanıp geliştirmesini Codex'e, QA testlerini Claude Code yaptır diyebileceğim gibi hepsini tek bir AI agent'a da yaptır diyebilmeliyim. ayrıca hangi modeli kullanacağı sonnet 4.5, 4.6, gpt-oss, gemini 2.5 flash, gemini 3.1 pro vs. de seçilebilmeli.
+

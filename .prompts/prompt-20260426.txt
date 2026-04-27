@@ -1,0 +1,34 @@
+"My Humanity Score" (MHS) adlı bir sosyal ağ/platform oluşturmak istiyorum aşağıdaki özelliklerin tümüne sahip olacak şekilde.
+
+Claude de bunu bir "Projects" olarak oluşturmak için gerekli olan tüm knowledge base ve custom instruction ları hazırlamanı ve bunları "My Humanity Score" adlı Projects içerisine bunları ekle.
+
+Araştırmanı çok detaylı bir şekilde yap, olası benzer uygulamaları deep search olarak araştır. Ultrathink
+
+İnsanlaron doğaya sağladığı katkı gibi verdiği zarar karbon izi, finansal skoru, kredi notu gibi verileri de gizli bir şekilde ekleyip genel Humanity Score hesaplamasına dahil olabilecek şekilde ki farklı fikirleri de dahil et.
+
+My Humanity Score Social App:
+Tüm dünyadaki insanların puanlaması o (skorunu) tutan ve takip edebilmesini sağlayan bir platform oluşturmak. Şöyle ki her kişinin kendi profil sayfası olacak ve kullandığı her türlü sosyal medya, sosyal sorumluluk projesi, insani yardım sisteminde ki aktivitesi, çalıştığı iş, gönüllü olarak yaptığı aktiviteler, mensubu olduğu her türlü dernek, kurum vb. Gibi insanlara faydası dokunan teknik bir soruna bulduğu çözümden, şahsi ve kitlesel savaş sorunlara bulduğu çözüm, akademik araştırma gibi her türlü mecra ve platformdaki aktiviteleri üzerinden bir "İnsanlık Skoru" çıkarıp tarihsel olarak bunu takip edebileceği, dünya çapındaki diğer tüm insanlar ile ülke, bölge, ünvan vb gibi her türlü demografik bilgi bazında analiz edip kıyaslayabilceği sosyal bir platform olacak.
+
+
+---
+
+Uygulama kesinlikle tümüyle ücretsiz olacak öyle kurumsal abonelik gibi birşey hiçbir zaman olmayacak.
+
+Kullanıcıların skorları dışında birde segmentlerini belirten VIP,  aktivist, gönüllü ve "Melek" gibi kendi profillerinde yayınlayıp gösterilebilecek rozetler dışında türler de olmalı.
+
+Gezegen doktorları, Nobel Barış ödülü, Gazze'ye yardım yapan kuruluşlar ve orada görev alan kişilere ait bilgilerinde sisteme toplanabilmesi yada kişiler tarafından beyan edilip skorlamaya dahil edilebilmesi mümkün olmalı.
+
+Uygulamanın daha geniş kitle ve kişilere hitap edebilmesi ve akılda kalıcı olması açısından daha kolay telafuz edilip bilinip aranabilir olması açısından 5-10 farklı isim önerisi bul. Örneğin Türkçe "İnsanlık Skorum", İngilizce "My Angelity" Vs. Gibi hem de domain adının kolay bulunup yazılabilir olmalı.
+
+İnsanların üye olduğu yardım kuruluşu, yaptığı bağış, burs, destek, evlatlık edinme, bulduğu patent, geliştirdiği ürün/çözüm, iklim krizi, gıda israfı önleme ile insanlık tarihine geçmesini sağlayan yada bir nebze  dahi olsa faydalı olmasını sağlayan her türlü aktivite, belgeyi ekleyebildiği ve bunların daha sonra sistem tarafından doğrulanıp kontrol ettiği bir yapı olmalı.
+
+Bu beyan sistemine ek olarak birde kişileri daha iyi tanımak ve skorlamak için üyelik sırasında sorulabilecek bir soru seti yapısı ile kişilerin iyilik seviyesini ön değerlendirme yapan bir anket sistemi de olmalı.
+
+Kişiler isterse kendileri gruplar kurup skorlarını birbirleri arasında paylaşıp görüp iletişim kurabilmeli.
+
+Roadmap de "Angel" adlı bir AI (LLM) aracını geliştirerek kişileri olası toksik saldırı, kötü yorum, verilerinin sızması/çalınması, gerçek olmayan kişilere ait profillerin oluşturulması vb. Gibi birçok atak, sızıntı durumlarına karşı proaktif olarak koruyan özel yapay zekanın geliştirilmesi yer almalı. Bu AI aynı zamanda bir mentör gibi de davranıp kişileri iyilik yapmaya motive edip, aylık değerlendirme ve görevleri benzer kişi/profillerden yola çıkarak önermeli.
+
+**Çok Önemli** sistemde kesinlikle din, dil, ırk, cinsiyet ayrımı gibi hiçbirşey olmamalı. Herşey tümüyle şeffaf, open source, community tarafından takip edilip beslenir şekilde olmalı. 
+
+Tüm bunlara göre daha önce oluşturduğun vizyon, misyon, knowledge base, custom instruction Vs. Gibi içeriklerin tümünü güncelle.
+
