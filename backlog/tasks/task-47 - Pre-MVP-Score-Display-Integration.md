@@ -1,34 +1,26 @@
 ---
 id: TASK-47
+title: Pre-MVP Score Display Integration
+status: Done
 assignee: []
-title: "Pre-MVP Score Display Integration"
-status: To Do
-priority: high
-milestone: "M5: Pre-MVP Demo"
-labels: ["epic012-frontend", "developer", "sonnet", "pre-mvp"]
+created_date: '2026-04-27 17:00'
+updated_date: '2026-04-28 12:03'
+labels:
+  - epic012-frontend
+  - developer
+  - sonnet
+  - pre-mvp
+milestone: 'M5: Pre-MVP Demo'
 dependencies:
   - task-6
   - task-8
   - task-46
-acceptance_criteria:
-  - "Profile page fetches real score from GET /api/v1/scores/{user_id}"
-  - "6-category breakdown displayed as horizontal bars (recharts or plain CSS)"
-  - "Total score (0-1000) shown prominently with level name and emoji"
-  - "Loading skeleton shown while fetch is in progress"
-  - "Error state shown if API is unreachable"
-  - "Works end-to-end: docker compose up → browser → score visible"
-created_date: '2026-04-27 17:00'
-updated_date: '2026-04-27 17:00'
-mhs_epic: EPIC-012 Frontend UI/UX
-mhs_agent: Developer
-mhs_model: claude-sonnet-4-6
-mhs_estimated_tokens: 20000
-mhs_estimated_hours: 2
+priority: high
 ---
 
-# TASK-047 — Pre-MVP Score Display Integration
-
 ## Description
+
+<!-- SECTION:DESCRIPTION:BEGIN -->
 Wire the profile page (TASK-6) to the real scoring API (TASK-8) so that
 selecting a demo user shows their actual computed MHS score and category
 breakdown from the database. This is the final integration step for Pre-MVP.
@@ -77,3 +69,12 @@ breakdown from the database. This is the final integration step for Pre-MVP.
 - Category colors from `MHS_COLORS` design tokens
 - Simple `<progress>` or recharts `<BarChart>` — keep it minimal
 - No SSR needed for Pre-MVP (client-side fetch is fine)
+<!-- SECTION:DESCRIPTION:END -->
+
+# TASK-047 — Pre-MVP Score Display Integration
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Profile page at /u/[username] fetches real MHS score from the API via SSR. ScoreRing.tsx renders animated SVG arc proportional to score/1000. CategoryBars.tsx shows 6 colour-coded category bars with point values. Verified live with Elif Kaya (342) and Marcus Johnson (438). Verified by Gemini QA.
+<!-- SECTION:FINAL_SUMMARY:END -->

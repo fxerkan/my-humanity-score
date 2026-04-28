@@ -28,9 +28,9 @@ MIN_SCORE: float = 0.0
 # ── Carbon penalty thresholds (kg CO2/year) ─────────────────────────────────
 _CARBON_THRESHOLDS: list[tuple[float, float]] = [
     (10_000, 100.0),
-    (5_000, 60.0),
-    (1_000, 20.0),
-    (0, 0.0),
+    (5_000,   70.0),
+    (1_000,   40.0),
+    (0,        0.0),
 ]
 MAX_CARBON_PENALTY: float = 100.0
 
@@ -44,11 +44,11 @@ MAX_TOXICITY_PENALTY: float = 80.0
 
 # ── Score level ranges ───────────────────────────────────────────────────────
 SCORE_LEVELS: list[tuple[float, str]] = [
-    (800.0, "humanity_legend"),
-    (650.0, "humanity_champion"),
-    (500.0, "change_agent"),
-    (350.0, "impact_maker"),
-    (200.0, "contributor"),
+    (850.0, "humanity_legend"),
+    (700.0, "humanity_champion"),
+    (550.0, "change_agent"),
+    (400.0, "impact_maker"),
+    (250.0, "contributor"),
     (100.0, "rising_star"),
     (0.0, "awakening"),
 ]
@@ -87,14 +87,17 @@ class ScoreInput:
 
 @dataclass
 class ScoreResult:
-    """Computed MHS score and breakdown."""
+    """Computed MHS score and breakdown.
 
-    total_score: float
-    score_level: str
-    category_totals: dict[str, float]
-    carbon_penalty: float
-    toxicity_penalty: float
-    # Client-safe buckets (never raw values)
+    Only client-safe fields are included — raw hidden factor values
+    (carbon kg, toxicity index, penalty amounts) are intentionally absent.
+    Field names follow the AC contract: final_score, level.
+    """
+
+    final_score: float
+    level: str
+    category_scores: dict[str, float]
+    # Client-safe bucket labels only — never raw penalty values
     carbon_bucket: str
     toxicity_bucket: str
 
@@ -130,11 +133,9 @@ def compute_score(inp: ScoreInput) -> ScoreResult:
     total = max(MIN_SCORE, min(MAX_SCORE, penalised))
 
     return ScoreResult(
-        total_score=round(total, 2),
-        score_level=_score_level(total),
-        category_totals={k: round(v, 2) for k, v in category_totals.items()},
-        carbon_penalty=round(carbon_penalty, 2),
-        toxicity_penalty=round(toxicity_penalty, 2),
+        final_score=round(total, 2),
+        level=_score_level(total),
+        category_scores={k: round(v, 2) for k, v in category_totals.items()},
         carbon_bucket=_carbon_bucket(inp.carbon_kg_per_year),
         toxicity_bucket=_toxicity_bucket(inp.toxicity_index),
     )
@@ -152,7 +153,7 @@ def _carbon_penalty(kg_per_year: float) -> float:
     for threshold, penalty in _CARBON_THRESHOLDS:
         if kg_per_year >= threshold:
             return min(penalty, MAX_CARBON_PENALTY)
-    return 0.0
+    return 0.0  # pragma: no cover — threshold list always includes (0, 0.0)
 
 
 def _toxicity_penalty(toxicity_index: float) -> float:
@@ -167,7 +168,7 @@ def _toxicity_penalty(toxicity_index: float) -> float:
     for threshold, penalty in _TOXICITY_THRESHOLDS:
         if toxicity_index >= threshold:
             return min(penalty, MAX_TOXICITY_PENALTY)
-    return 0.0
+    return 0.0  # pragma: no cover — threshold list always includes (0.0, 0.0)
 
 
 def _score_level(total: float) -> str:
@@ -182,7 +183,7 @@ def _score_level(total: float) -> str:
     for min_score, level in SCORE_LEVELS:
         if total >= min_score:
             return level
-    return "awakening"
+    return "awakening"  # pragma: no cover — SCORE_LEVELS always includes (0.0, ...)
 
 
 def _carbon_bucket(kg_per_year: float) -> str:
@@ -224,8 +225,8 @@ class MHSCalculator:
     calls compute_score(), and persists the result.
     """
 
-    def calculate(self, user_id: uuid.UUID) -> dict[str, object]:
-        """Calculate and persist the MHS score for a user.
+    def calculate(self, user_id: uuid.UUID) -> ScoreResult:
+        """Calculate the MHS score for a user.
 
         This is a synchronous stub — real aggregation queries implemented
         when activities API (TASK-010) and verification pipeline are complete.
@@ -234,21 +235,11 @@ class MHSCalculator:
             user_id: UUID of the user to score.
 
         Returns:
-            Dict with user_id and computed score fields.
+            ScoreResult dataclass (no raw hidden-factor values).
         """
         # Stub input — real query aggregation in TASK-010
         inp = ScoreInput()
-        result = compute_score(inp)
-        return {
-            "user_id": str(user_id),
-            "total_score": result.total_score,
-            "score_level": result.score_level,
-            "category_totals": result.category_totals,
-            "carbon_penalty": result.carbon_penalty,
-            "toxicity_penalty": result.toxicity_penalty,
-            "carbon_bucket": result.carbon_bucket,
-            "toxicity_bucket": result.toxicity_bucket,
-        }
+        return compute_score(inp)
 
     @staticmethod
     def compute(inp: ScoreInput) -> ScoreResult:

@@ -22,8 +22,8 @@ const API_BASE =
   "http://localhost:8000";
 
 interface ScoreSummary {
-  total_score: number;
-  score_level: string;
+  final_score: number;
+  level: string;
   social_impact: number;
   environmental: number;
   knowledge_innovation: number;
@@ -67,7 +67,7 @@ export async function generateMetadata({
   if (!profile) return { title: "User not found" };
 
   const displayName = profile.display_name ?? profile.username;
-  const score = profile.score?.total_score ?? 0;
+  const score = profile.score?.final_score ?? 0;
   const level = getLevelInfo(score);
 
   return {
@@ -91,8 +91,8 @@ export async function generateMetadata({
 
 /** Zero-state score used for new users who have no score record yet. */
 const ZERO_SCORE: ScoreSummary = {
-  total_score: 0,
-  score_level: "awakening",
+  final_score: 0,
+  level: "awakening",
   social_impact: 0,
   environmental: 0,
   knowledge_innovation: 0,
@@ -112,7 +112,7 @@ export default async function UserProfilePage({
   if (!profile) notFound();
 
   const score = profile.score ?? ZERO_SCORE;
-  const level = getLevelInfo(score.total_score);
+  const level = getLevelInfo(score.final_score);
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-8">
@@ -120,10 +120,10 @@ export default async function UserProfilePage({
 
       {/* Score ring + level */}
       <section className="bg-slate-800 rounded-2xl p-6 flex flex-col sm:flex-row items-center gap-6">
-        <ScoreRing score={score.total_score} level={level} />
+        <ScoreRing score={score.final_score} level={level} />
         <div className="text-center sm:text-left">
           <p className="text-slate-400 text-sm">MHS Score</p>
-          <p className="text-5xl font-black text-white">{Math.round(score.total_score)}</p>
+          <p className="text-5xl font-black text-white">{Math.round(score.final_score)}</p>
           <p data-testid="mhs-level-badge" className="text-lg font-semibold mt-1" style={{ color: level.color }}>
             {level.emoji} {level.name}
           </p>
