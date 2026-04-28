@@ -7,12 +7,10 @@ import pytest
 from services.score_calculator import (
     MAX_SCORE,
     MIN_SCORE,
-    SCORE_LEVELS,
-    ScoreInput,
     MHSCalculator,
+    ScoreInput,
     compute_score,
 )
-
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 

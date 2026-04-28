@@ -3,7 +3,6 @@
 import pytest
 from httpx import AsyncClient
 
-
 pytestmark = pytest.mark.asyncio
 
 _USER = {
@@ -38,6 +37,12 @@ async def test_get_me_returns_own_profile(client: AsyncClient) -> None:
 
 async def test_get_me_unauthenticated_returns_401(client: AsyncClient) -> None:
     resp = await client.get("/users/me")
+    assert resp.status_code == 401
+
+
+async def test_get_me_with_invalid_token_returns_401(client: AsyncClient) -> None:
+    """GET /users/me with a garbage token must return 401."""
+    resp = await client.get("/users/me", headers={"Authorization": "Bearer not.a.real.token"})
     assert resp.status_code == 401
 
 

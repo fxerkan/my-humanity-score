@@ -3,7 +3,6 @@
 import pytest
 from httpx import AsyncClient
 
-
 pytestmark = pytest.mark.asyncio
 
 
@@ -88,3 +87,73 @@ async def test_refresh_with_access_token_returns_401(client: AsyncClient) -> Non
 
     resp = await client.post("/auth/refresh", json={"refresh_token": access_token})
     assert resp.status_code == 401
+
+
+async def test_replay_attack_rejected(client: AsyncClient) -> None:
+    """Used refresh token cannot be reused (replay protection)."""
+    await client.post("/auth/register", json=_USER)
+    login_resp = await client.post(
+        "/auth/login",
+        json={"email": _USER["email"], "password": _USER["password"]},
+    )
+    original_token = login_resp.json()["refresh_token"]
+
+    # First use — should succeed
+    first = await client.post("/auth/refresh", json={"refresh_token": original_token})
+    assert first.status_code == 200
+
+    # Second use of the same token — must be rejected
+    second = await client.post("/auth/refresh", json={"refresh_token": original_token})
+    assert second.status_code == 401
+
+
+async def test_full_auth_flow(client: AsyncClient) -> None:
+    """register → login → refresh → replay rejected → logout → post-logout refresh rejected."""
+    # Register
+    reg = await client.post("/auth/register", json=_USER)
+    assert reg.status_code == 201
+
+    # Login
+    login_resp = await client.post(
+        "/auth/login",
+        json={"email": _USER["email"], "password": _USER["password"]},
+    )
+    assert login_resp.status_code == 200
+    tokens = login_resp.json()
+    original_refresh = tokens["refresh_token"]
+
+    # Refresh — should return a new token pair
+    refresh_resp = await client.post("/auth/refresh", json={"refresh_token": original_refresh})
+    assert refresh_resp.status_code == 200
+    new_tokens = refresh_resp.json()
+    new_refresh = new_tokens["refresh_token"]
+    assert new_refresh != original_refresh
+
+    # Replay: old refresh token must now be rejected
+    replay = await client.post("/auth/refresh", json={"refresh_token": original_refresh})
+    assert replay.status_code == 401
+
+    # Logout using the new token
+    logout_resp = await client.post("/auth/logout", json={"refresh_token": new_refresh})
+    assert logout_resp.status_code == 200
+
+    # After logout, the new refresh token must also be rejected
+    after_logout = await client.post("/auth/refresh", json={"refresh_token": new_refresh})
+    assert after_logout.status_code == 401
+
+
+async def test_logout_is_idempotent(client: AsyncClient) -> None:
+    """Logging out twice with the same token must not raise an error."""
+    await client.post("/auth/register", json=_USER)
+    login_resp = await client.post(
+        "/auth/login",
+        json={"email": _USER["email"], "password": _USER["password"]},
+    )
+    refresh_token = login_resp.json()["refresh_token"]
+
+    resp1 = await client.post("/auth/logout", json={"refresh_token": refresh_token})
+    assert resp1.status_code == 200
+
+    # Second logout with same token — should still return 200
+    resp2 = await client.post("/auth/logout", json={"refresh_token": refresh_token})
+    assert resp2.status_code == 200

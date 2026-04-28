@@ -2,6 +2,7 @@
 
 import uuid
 from datetime import datetime
+from decimal import Decimal
 
 from pydantic import BaseModel, EmailStr, field_validator
 
@@ -18,6 +19,12 @@ class UserCreate(BaseModel):
             raise ValueError("Username may only contain letters, numbers, hyphens, underscores")
         if len(v) < 3 or len(v) > 50:
             raise ValueError("Username must be 3–50 characters")
+        return v.lower()
+
+    @field_validator("email")
+    @classmethod
+    def email_lower(cls, v: str) -> str:
+        """Normalise email to lowercase for consistent DB lookups."""
         return v.lower()
 
     @field_validator("password")
@@ -50,6 +57,36 @@ class UserResponse(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class ScoreSummary(BaseModel):
+    """Embedded score snapshot for public profile responses."""
+
+    total_score: Decimal
+    score_level: str
+    social_impact: Decimal
+    environmental: Decimal
+    knowledge_innovation: Decimal
+    economic_contribution: Decimal
+    cultural_artistic: Decimal
+    civic_political: Decimal
+    calculated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class UserPublicResponse(BaseModel):
+    """Public user profile — no PII, includes latest score snapshot."""
+
+    username: str
+    display_name: str | None
+    avatar_url: str | None
+    bio: str | None
+    country_code: str | None
+    created_at: datetime
+    score: ScoreSummary | None = None
+
+    model_config = {"from_attributes": True}
+
+
 class TokenResponse(BaseModel):
     access_token: str
     refresh_token: str
@@ -59,6 +96,12 @@ class TokenResponse(BaseModel):
 class LoginRequest(BaseModel):
     email: EmailStr
     password: str
+
+    @field_validator("email")
+    @classmethod
+    def email_lower(cls, v: str) -> str:
+        """Normalise email to lowercase for consistent DB lookups."""
+        return v.lower()
 
 
 class RefreshRequest(BaseModel):

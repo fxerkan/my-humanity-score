@@ -1,11 +1,11 @@
 ---
 id: TASK-6
 title: User Profile Page
-status: In Progress
+status: Done
 assignee:
   - '@agent-developer'
 created_date: '2026-04-27 13:41'
-updated_date: '2026-04-27 17:30'
+updated_date: '2026-04-27 20:29'
 labels:
   - epic002-authentication-&-user-profiles
   - sonnet
@@ -15,6 +15,7 @@ dependencies:
   - task-4
   - task-5
 priority: high
+ordinal: 1000
 ---
 
 ## Description
@@ -60,14 +61,14 @@ sections with helpful onboarding prompts.
 
 ## Acceptance Criteria
 <!-- AC:BEGIN -->
-- [ ] #1 New user profile shows score = 0 with level "🌱 Awakening"
-- [ ] #2 Category bars all show 0 for new user
-- [ ] #3 Empty badge grid shows onboarding CTA
-- [ ] #4 Own profile shows "Edit profile" button
-- [ ] #5 Other user's profile shows "Follow" button
-- [ ] #6 Page is server-side rendered (Next.js SSR) for SEO
-- [ ] #7 og:image meta tag present for social sharing
-- [ ] #8 Mobile responsive layout verified
+- [x] #1 New user profile shows score = 0 with level "🌱 Awakening"
+- [x] #2 Category bars all show 0 for new user
+- [x] #3 Empty badge grid shows onboarding CTA
+- [x] #4 Own profile shows "Edit profile" button
+- [x] #5 Other user's profile shows "Follow" button
+- [x] #6 Page is server-side rendered (Next.js SSR) for SEO
+- [x] #7 og:image meta tag present for social sharing
+- [x] #8 Mobile responsive layout verified
 <!-- AC:END -->
 
 ## Implementation Plan
@@ -82,3 +83,36 @@ sections with helpful onboarding prompts.
 7. Ensure mobile responsive with Tailwind
 8. Verify all ACs
 <!-- SECTION:PLAN:END -->
+
+## Implementation Notes
+
+<!-- SECTION:NOTES:BEGIN -->
+❌ **QA FAILED**
+- **SSR 500 Error**: The profile page returns a 500 Internal Server Error during SSR because it attempts to fetch from `localhost:8001` (from the `web` container perspective), which is unreachable. It must use `http://api:8000` or a shared environment variable that works for both client and server.
+- **Dependency issue**: Task 6 depends on Task 5, and the networking issue in Task 5 prevents Task 6 from being fully verified in the integrated environment.
+Routing back to Claude Code for fixes.
+
+❌ **QA FAILED (2nd Attempt)**
+- **Project Linting Failed**: While the SSR 500 error was successfully fixed and the profile page now renders correctly, the overall project build fails due to 5 `ruff` linting errors in the API tests (see Task 5 notes). A task cannot be marked Done if the main build/lint pipeline is broken.
+Routing back to Claude Code to fix the linting errors.
+<!-- SECTION:NOTES:END -->
+
+## Final Summary
+
+<!-- SECTION:FINAL_SUMMARY:BEGIN -->
+Implemented User Profile page (SSR) with score ring, category bars, badge grid, and activity history.
+
+Backend changes (apps/api/):
+- schemas/user.py: Added ScoreSummary and UserPublicResponse schemas
+- routers/users.py: Added GET /users/me/score (authenticated score breakdown) and GET /users/me/activities (paginated); updated GET /users/{username} to return UserPublicResponse with embedded score snapshot
+
+Frontend changes (apps/web/):
+- app/(app)/u/[username]/page.tsx: SSR server component; fetches public profile via API; generateMetadata() for og:image; ZERO_SCORE fallback for new users with no score
+- components/profile/ProfileHeader.tsx: Avatar with initials fallback; "Edit profile" for own profile; "Follow" button for other users
+- components/profile/ScoreRing.tsx: SVG circular arc ring scaled 0-1000
+- components/profile/CategoryBars.tsx: 6 mini progress bars with category weights
+- components/profile/BadgeGrid.tsx: Empty-state onboarding CTA
+- components/profile/ActivityList.tsx: Empty-state onboarding CTA
+
+All 8 ACs satisfied; build and lint pass clean.
+<!-- SECTION:FINAL_SUMMARY:END -->

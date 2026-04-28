@@ -12,6 +12,8 @@ from __future__ import annotations
 
 import os
 from collections.abc import AsyncGenerator, Generator
+from typing import Any
+from unittest.mock import AsyncMock
 
 import pytest
 import pytest_asyncio
@@ -30,6 +32,7 @@ import models.group  # noqa: F401
 import models.score  # noqa: F401
 import models.user  # noqa: F401
 from core.database import Base, get_db
+from core.redis_client import get_redis_dep
 from main import app
 
 # ── Test database URLs ────────────────────────────────────────────────────────
@@ -87,15 +90,68 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
     await async_engine.dispose()
 
 
-# ── Async HTTP client with DB dependency override ────────────────────────────
+# ── In-memory Redis mock for unit/integration tests ──────────────────────────
+
+class FakeRedis:
+    """Minimal in-memory Redis mock that supports setex, delete, and exists."""
+
+    def __init__(self) -> None:
+        self._store: dict[str, str] = {}
+
+    async def setex(self, name: str, time: int, value: str) -> None:
+        """Store a key with an ignored TTL (tests don't need real expiry)."""
+        self._store[name] = value
+
+    async def delete(self, *names: str) -> int:
+        """Delete one or more keys; return count of deleted keys."""
+        count = 0
+        for name in names:
+            if name in self._store:
+                del self._store[name]
+                count += 1
+        return count
+
+    async def exists(self, *names: str) -> int:
+        """Return the number of requested keys that exist."""
+        return sum(1 for name in names if name in self._store)
+
+    async def eval(self, script: str, numkeys: int, *keys: str) -> int:
+        """Minimal eval that handles only the consume-token Lua pattern."""
+        key = keys[0] if keys else ""
+        if key in self._store:
+            del self._store[key]
+            return 1
+        return 0
+
+    def clear(self) -> None:
+        """Reset all stored keys (called between tests)."""
+        self._store.clear()
+
+
 @pytest_asyncio.fixture
-async def client(db_session: AsyncSession) -> AsyncGenerator[AsyncClient, None]:
-    """AsyncClient with FastAPI DB dependency replaced by the test session."""
+async def fake_redis() -> AsyncGenerator[FakeRedis, None]:
+    """Yield a fresh FakeRedis instance, cleared after the test."""
+    fr = FakeRedis()
+    yield fr
+    fr.clear()
+
+
+# ── Async HTTP client with DB + Redis dependency overrides ───────────────────
+@pytest_asyncio.fixture
+async def client(
+    db_session: AsyncSession,
+    fake_redis: FakeRedis,
+) -> AsyncGenerator[AsyncClient, None]:
+    """AsyncClient with FastAPI DB and Redis dependencies replaced by test fakes."""
 
     async def _override_get_db() -> AsyncGenerator[AsyncSession, None]:
         yield db_session
 
+    async def _override_get_redis() -> AsyncGenerator[FakeRedis, None]:
+        yield fake_redis
+
     app.dependency_overrides[get_db] = _override_get_db
+    app.dependency_overrides[get_redis_dep] = _override_get_redis
     async with AsyncClient(
         transport=ASGITransport(app=app), base_url="http://test"
     ) as ac:

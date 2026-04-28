@@ -53,7 +53,10 @@ services:
     container_name: mhs_web
     restart: unless-stopped
     environment:
+      # Browser (client-side) calls — resolved by the user's browser
       NEXT_PUBLIC_API_URL: http://localhost:8001
+      # Server-side (SSR) calls — resolved inside Docker network
+      API_INTERNAL_URL: http://api:8000
     ports:
       - "3000:3000"
     volumes:
@@ -97,6 +100,45 @@ services:
       - ./apps/api:/app
     depends_on:
       - db
+      - redis
+
+  # ── Celery Beat scheduler (optional — enable with --profile full) ───────────
+  beat:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    container_name: mhs_beat
+    restart: unless-stopped
+    env_file: .env
+    profiles: ["full"]
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mhs}:${POSTGRES_PASSWORD:-mhs}@db:5432/${POSTGRES_DB:-mhs}
+      REDIS_URL: redis://redis:6379/0
+    command: celery -A celery_app beat --loglevel=info
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      - db
+      - redis
+
+  # ── Celery Flower monitoring (optional — enable with --profile full) ─────────
+  flower:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    container_name: mhs_flower
+    restart: unless-stopped
+    env_file: .env
+    profiles: ["full"]
+    environment:
+      REDIS_URL: redis://redis:6379/0
+      FLOWER_PORT: 5555
+    command: celery -A celery_app flower --port=5555 --broker=redis://redis:6379/0
+    ports:
+      - "5555:5555"
+    volumes:
+      - ./apps/api:/app
+    depends_on:
       - redis
 
   # ── Neo4j (optional — enable with: docker compose --profile graph up) ──────

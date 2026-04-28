@@ -14,7 +14,6 @@ from core.security import (
     verify_password,
 )
 
-
 # ── Password hashing ──────────────────────────────────────────────────────────
 
 def test_hash_password_returns_bcrypt_hash() -> None:
