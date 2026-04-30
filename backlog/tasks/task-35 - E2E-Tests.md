@@ -1,11 +1,11 @@
 ---
 id: TASK-35
 title: E2E Tests
-status: In Progress
+status: Done
 assignee:
   - '@developer'
 created_date: '2026-04-27 13:41'
-updated_date: '2026-04-28 08:16'
+updated_date: '2026-04-30 07:10'
 labels:
   - epic001-foundation-&-infrastructure
   - haiku
@@ -14,6 +14,7 @@ dependencies:
   - task-5
   - task-6
 priority: medium
+ordinal: 5000
 ---
 
 ## Description

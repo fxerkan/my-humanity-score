@@ -5,7 +5,7 @@ status: Done
 assignee:
   - '@developer'
 created_date: '2026-04-27 13:41'
-updated_date: '2026-04-27 17:18'
+updated_date: '2026-04-30 07:10'
 labels:
   - epic001-foundation-&-infrastructure
   - sonnet
@@ -13,6 +13,7 @@ labels:
 dependencies:
   - task-3
 priority: high
+ordinal: 2000
 ---
 
 ## Description

@@ -31,7 +31,8 @@ import models.score  # noqa: F401
 import models.user  # noqa: F401
 from core.database import Base, get_db
 from core.redis_client import get_redis_dep
-from main import app
+from main import app, limiter
+from routers import auth as _auth_router
 
 # ── Test database URLs ────────────────────────────────────────────────────────
 _TEST_DB_SYNC = os.getenv(
@@ -62,6 +63,14 @@ def run_migrations() -> Generator[None, None, None]:
         conn.execute(text("GRANT ALL ON SCHEMA public TO mhs"))
         conn.execute(text("GRANT ALL ON SCHEMA public TO public"))
     sync_engine.dispose()
+
+
+# ── Disable slowapi rate-limiters for the entire test session ────────────────
+# In-memory rate-limit counters accumulate across tests (same IP: 127.0.0.1).
+# The auth router creates its own Limiter instance for the /auth/login route;
+# both must be disabled to prevent spurious 429s in the full test suite.
+limiter.enabled = False
+_auth_router.limiter.enabled = False
 
 
 # ── Function-scoped async session (SAVEPOINT rollback per test) ──────────────

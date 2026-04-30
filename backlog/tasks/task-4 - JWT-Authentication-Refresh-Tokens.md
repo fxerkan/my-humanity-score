@@ -1,11 +1,11 @@
 ---
 id: TASK-4
 title: JWT Authentication + Refresh Tokens
-status: In Progress
+status: Done
 assignee:
   - '@claude'
 created_date: '2026-04-27 13:41'
-updated_date: '2026-04-28 09:32'
+updated_date: '2026-04-30 07:10'
 labels:
   - epic002-authentication-&-user-profiles
   - sonnet
@@ -14,6 +14,7 @@ dependencies:
   - task-2
   - task-3
 priority: high
+ordinal: 4000
 ---
 
 ## Description

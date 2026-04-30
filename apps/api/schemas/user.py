@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 from decimal import Decimal
 
-from pydantic import BaseModel, EmailStr, field_validator
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 
 class UserCreate(BaseModel):
@@ -60,8 +60,8 @@ class UserResponse(BaseModel):
 class ScoreSummary(BaseModel):
     """Embedded score snapshot for public profile responses."""
 
-    total_score: Decimal
-    score_level: str
+    final_score: Decimal = Field(validation_alias="total_score")
+    level: str = Field(validation_alias="score_level")
     social_impact: Decimal
     environmental: Decimal
     knowledge_innovation: Decimal
@@ -70,7 +70,7 @@ class ScoreSummary(BaseModel):
     civic_political: Decimal
     calculated_at: datetime
 
-    model_config = {"from_attributes": True}
+    model_config = {"from_attributes": True, "populate_by_name": True}
 
 
 class UserPublicResponse(BaseModel):

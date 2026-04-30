@@ -18,6 +18,25 @@ services:
       timeout: 5s
       retries: 10
 
+  # ── DB migrations + demo seed (runs once, exits) ──────────────────────────
+  migrate:
+    build:
+      context: .
+      dockerfile: docker/api.Dockerfile
+    container_name: mhs_migrate
+    restart: "no"
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-mhs}:${POSTGRES_PASSWORD:-mhs}@db:5432/${POSTGRES_DB:-mhs}
+      DATABASE_URL_SYNC: postgresql://${POSTGRES_USER:-mhs}:${POSTGRES_PASSWORD:-mhs}@db:5432/${POSTGRES_DB:-mhs}
+    command: >
+      sh -c "alembic upgrade head && python scripts/seed_demo.py"
+    volumes:
+      - ./apps/api:/app
+    depends_on:
+      db:
+        condition: service_healthy
+
   # ── FastAPI ────────────────────────────────────────────────────────────────
   api:
     build:
@@ -38,6 +57,10 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 10s
@@ -67,12 +90,11 @@ services:
       api:
         condition: service_healthy
 
-  # ── Redis (optional — enable with: docker compose --profile cache up) ──────
+  # ── Redis ──────────────────────────────────────────────────────────────────
   redis:
     image: redis:7-alpine
     container_name: mhs_redis
     restart: unless-stopped
-    profiles: ["cache", "full"]
     ports:
       - "6379:6379"
     volumes:

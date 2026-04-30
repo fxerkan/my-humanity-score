@@ -4,12 +4,14 @@ title: 'hotfix: fix CI ruff lint failures in conftest.py and seed_demo.py'
 status: Done
 assignee: []
 created_date: '2026-04-28 13:00'
+updated_date: '2026-04-30 07:10'
 labels:
   - bug
   - ci
   - hotfix
 dependencies: []
 priority: high
+ordinal: 1000
 ---
 
 ## Description
