@@ -5,7 +5,7 @@ status: Done
 assignee:
   - '@claude'
 created_date: '2026-04-27 13:41'
-updated_date: '2026-04-29 08:33'
+updated_date: '2026-04-30 07:12'
 labels:
   - epic003-mhs-scoring-engine
   - sonnet
@@ -99,21 +99,21 @@ NaN regression fixed: schemas/user.py ScoreSummary now uses validation_alias for
 ## Final Summary
 
 <!-- SECTION:FINAL_SUMMARY:BEGIN -->
-Implemented TASK-8: Scoring Categories API with 3 new endpoints.
+Added three new scoring API endpoints and fixed a NaN regression on the profile page.
 
-Changes:
-- apps/api/schemas/score.py: Added CarbonBucket/ToxicityBucket/NetworkEffect/ConsistencyBucket enums, LevelInfo, ScorePublic, CategoryDetail, HiddenAdjustments, BreakdownResponse, RecalculateResponse schemas; added level_info() helper and bucket-mapping functions that convert raw ORM values to client-safe named buckets
-- apps/api/routers/scores.py: Replaced stub with full implementation — GET /scores/{username} (public), GET /scores/me/breakdown (auth), POST /scores/me/recalculate (auth, 202, stub task_id), plus existing /me and /leaderboard endpoints
-- apps/api/tests/integration/test_scores_api.py: 21 new integration tests covering all 6 ACs
-- apps/api/tests/conftest.py: Fixed pre-existing cross-test rate-limit issue by disabling both main and auth-router Limiter instances in tests
+Endpoints:
+- GET /scores/{username} — public score summary with real global percentile calculation
+- GET /scores/me/breakdown — authenticated per-category breakdown with client-safe hidden-adjustment buckets
+- POST /scores/me/recalculate — stub async recalculation (task_id + "queued"); Celery wiring deferred to TASK-11
 
-AC status:
-- AC1: GET /scores/{username} works without auth — PASS
-- AC2: GET /scores/me/breakdown requires auth — PASS
-- AC3: No raw hidden-factor values in any response — PASS
-- AC4: Hidden buckets use only allowed enum values — PASS
-- AC5: (Celery stub) noted for TASK-11 — acknowledged
-- AC6: POST /scores/me/recalculate returns task_id/status queued — PASS
+Ethics enforcement: raw hidden-factor values (kg CO2, toxicity index, penalty amounts, multiplier floats)
+never appear in any response. Only named bucket labels (CarbonBucket, ToxicityBucket, NetworkEffect,
+ConsistencyBucket) are exposed via HiddenAdjustments schema.
 
-Test results: 100/100 passed (21 new + 79 pre-existing)
+Bug fix: schemas/user.py ScoreSummary used old ORM column names (total_score, score_level) causing the
+frontend profile page to read undefined and display NaN. Fixed with Pydantic validation_alias mapping to
+final_score/level with populate_by_name=True.
+
+Tests: 21 new integration tests covering all endpoints, ethics checks (recursive forbidden-field scan),
+auth requirements, and edge cases. 100/100 total tests passing.
 <!-- SECTION:FINAL_SUMMARY:END -->
