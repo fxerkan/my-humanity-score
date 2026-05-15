@@ -8,8 +8,8 @@ and closed during shutdown.  Tests can override the driver via
 from __future__ import annotations
 
 import logging
+from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
-from typing import AsyncGenerator
 
 from neo4j import AsyncGraphDatabase
 from neo4j.exceptions import Neo4jError, ServiceUnavailable

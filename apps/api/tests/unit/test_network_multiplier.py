@@ -230,7 +230,6 @@ async def test_calculator_uses_network_multiplier() -> None:
         assert 0.0 <= result_max.final_score <= 1000.0
 
     # Pure function: verify multiplier > 1.0 increases score
-    inp = ScoreInput(social_impact=500.0)
     result_1 = compute_score(ScoreInput(social_impact=500.0, network_multiplier=1.0))
     result_2 = compute_score(ScoreInput(social_impact=500.0, network_multiplier=1.5))
     assert result_2.final_score > result_1.final_score

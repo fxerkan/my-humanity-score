@@ -22,7 +22,6 @@ from enum import Enum
 
 from pydantic import BaseModel, Field
 
-
 # ── Allowed enum values for hidden adjustment buckets ────────────────────────
 
 class CarbonBucket(str, Enum):

@@ -26,7 +26,6 @@ from sqlalchemy import update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models.score import MHSScore
-from models.user import User
 from schemas.score import CarbonBucket, ConsistencyBucket, NetworkEffect, ToxicityBucket
 
 pytestmark = pytest.mark.asyncio
