@@ -1,0 +1,38 @@
+name: Claude Issue Handler
+
+# Handle issues with @claude mentions
+on:
+  issues:
+    types: [opened, labeled]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  claude:
+    # Run if issue has 'claude' label or @claude is mentioned
+    if: |
+      (github.event_name == 'issues' && contains(github.event.issue.labels.*.name, 'claude')) ||
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude'))
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Run Claude Code Action
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          trigger_phrase: "@claude"
+          claude_args: |
+            --model claude-sonnet-4-20250514
+            --max-turns 15
+            --append-system-prompt "You are working on the My Humanity Score (MHS) project. Always read CLAUDE.md for project standards and never introduce discrimination logic in scoring."

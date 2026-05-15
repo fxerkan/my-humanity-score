@@ -1,0 +1,181 @@
+name: AI PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  claude-review:
+    name: Claude AI Review
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get PR details
+        id: pr
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            return {
+              title: pr.title,
+              body: pr.body || '',
+              base: pr.base.sha,
+              head: pr.head.sha,
+              files: files.map(f => ({
+                filename: f.filename,
+                status: f.status,
+                additions: f.additions,
+                deletions: f.deletions,
+                patch: f.patch
+              }))
+            };
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Review PR with Claude
+        id: review
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PR_DATA: ${{ steps.pr.outputs.result }}
+        run: |
+          cat > review.mjs << 'EOF'
+          import Anthropic from '@anthropic-ai/sdk';
+
+          const anthropic = new Anthropic({
+            apiKey: process.env.ANTHROPIC_API_KEY,
+          });
+
+          const prData = JSON.parse(process.env.PR_DATA);
+
+          // Build file changes summary
+          const fileChanges = prData.files.map(file => {
+            return `
+          ## File: ${file.filename}
+          Status: ${file.status}
+          Changes: +${file.additions} -${file.deletions}
+
+          \`\`\`diff
+          ${file.patch || '(Binary or too large)'}
+          \`\`\`
+          `;
+          }).join('\n---\n');
+
+          const prompt = `You are reviewing a Pull Request for the My Humanity Score (MHS) project.
+
+          Repository: https://github.com/fxerkan/my-humanity-score
+          Project: Open-source platform measuring humanity contributions
+
+          ## PR Details
+          **Title:** ${prData.title}
+          **Description:**
+          ${prData.body}
+
+          ## Changed Files
+          ${fileChanges}
+
+          Please provide a comprehensive code review covering:
+
+          1. **Code Quality**: Clean code principles, maintainability, readability
+          2. **Security**: Potential vulnerabilities, input validation, auth/access control
+          3. **Performance**: Potential bottlenecks, optimization opportunities
+          4. **Testing**: Test coverage, edge cases, test quality
+          5. **Architecture**: Design patterns, separation of concerns, SOLID principles
+          6. **MHS-Specific**:
+             - Ensure no discrimination logic in scoring (religion, race, gender, nationality, etc.)
+             - Verify ethical considerations are met
+             - Check scoring algorithm transparency
+          7. **Suggestions**: Specific improvements with code examples where helpful
+
+          Format your review in GitHub-flavored markdown with clear sections.
+          Be constructive, specific, and actionable. Highlight both strengths and areas for improvement.`;
+
+          const message = await anthropic.messages.create({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 4096,
+            messages: [
+              {
+                role: 'user',
+                content: prompt
+              }
+            ]
+          });
+
+          const review = message.content[0].text;
+
+          // Write to GitHub output using heredoc
+          const fs = await import('fs');
+          const outputFile = process.env.GITHUB_OUTPUT;
+          fs.appendFileSync(outputFile, `review<<EOF\n${review}\nEOF\n`);
+          EOF
+
+          npm install @anthropic-ai/sdk
+          node review.mjs
+
+      - name: Post review comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const review = `${{ steps.review.outputs.review }}`;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## 🤖 Claude AI Review\n\n${review}\n\n---\n*Powered by Claude Sonnet 4 • [MHS Project](https://github.com/fxerkan/my-humanity-score)*`
+            });
+
+      - name: Check for critical issues
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const review = `${{ steps.review.outputs.review }}`;
+            const lowerReview = review.toLowerCase();
+
+            const criticalKeywords = [
+              'critical security',
+              'sql injection',
+              'xss vulnerability',
+              'authentication bypass',
+              'hardcoded secret',
+              'discrimination',
+              'bias in scoring'
+            ];
+
+            const foundIssues = criticalKeywords.filter(keyword =>
+              lowerReview.includes(keyword)
+            );
+
+            if (foundIssues.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                labels: ['⚠️ needs-review', 'security']
+              });
+
+              core.warning(`Critical issues detected: ${foundIssues.join(', ')}`);
+            }
