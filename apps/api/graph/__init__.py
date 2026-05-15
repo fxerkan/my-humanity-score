@@ -1,0 +1,53 @@
+"""Neo4j graph layer — driver, client, and Cypher queries."""
+
+from graph.client import (
+    close_driver,
+    get_neo4j_driver,
+    neo4j_session,
+    set_neo4j_driver,
+    verify_connectivity,
+)
+from graph.queries import (
+    COUNT_INSPIRED_USERS,
+    CREATE_ACTIVITY_CONSTRAINT,
+    CREATE_CONSTRAINTS,
+    CREATE_FOLLOWS,
+    CREATE_INSPIRED_BY,
+    CREATE_INSPIRED_BY_INDEX,
+    CREATE_ORG_CONSTRAINT,
+    CREATE_PART_OF,
+    CREATE_PERFORMED,
+    GET_FOLLOWERS,
+    GET_FOLLOWING,
+    GET_INSPIRATION_CHAIN,
+    MERGE_ACTIVITY,
+    MERGE_USER,
+    REMOVE_FOLLOWS,
+    REMOVE_INSPIRED_BY,
+    run_query,
+)
+
+__all__ = [
+    "close_driver",
+    "get_neo4j_driver",
+    "neo4j_session",
+    "set_neo4j_driver",
+    "verify_connectivity",
+    "COUNT_INSPIRED_USERS",
+    "CREATE_ACTIVITY_CONSTRAINT",
+    "CREATE_CONSTRAINTS",
+    "CREATE_FOLLOWS",
+    "CREATE_INSPIRED_BY",
+    "CREATE_INSPIRED_BY_INDEX",
+    "CREATE_ORG_CONSTRAINT",
+    "CREATE_PART_OF",
+    "CREATE_PERFORMED",
+    "GET_FOLLOWERS",
+    "GET_FOLLOWING",
+    "GET_INSPIRATION_CHAIN",
+    "MERGE_ACTIVITY",
+    "MERGE_USER",
+    "REMOVE_FOLLOWS",
+    "REMOVE_INSPIRED_BY",
+    "run_query",
+]

@@ -9,7 +9,6 @@ Ethics rules enforced here:
 from __future__ import annotations
 
 import uuid
-from decimal import Decimal
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import desc, func, select
@@ -44,6 +43,7 @@ _STUB_GLOBAL_PERCENTILE: float = 50.0  # placeholder until leaderboard statistic
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 async def _latest_score_for_user(user_id: uuid.UUID, db: AsyncSession) -> MHSScore | None:
     """Return the most recent MHSScore for a user, or None.
 
@@ -55,9 +55,7 @@ async def _latest_score_for_user(user_id: uuid.UUID, db: AsyncSession) -> MHSSco
         Most recent MHSScore ORM object, or None if no score exists.
     """
     return await db.scalar(
-        select(MHSScore)
-        .where(MHSScore.user_id == user_id)
-        .order_by(desc(MHSScore.calculated_at))
+        select(MHSScore).where(MHSScore.user_id == user_id).order_by(desc(MHSScore.calculated_at))
     )
 
 
@@ -104,6 +102,7 @@ def _build_breakdown(score: MHSScore) -> BreakdownResponse:
 
 
 # ── Endpoints ─────────────────────────────────────────────────────────────────
+
 
 @router.get("/me/breakdown", response_model=BreakdownResponse)
 async def get_my_breakdown(
@@ -192,10 +191,7 @@ async def get_leaderboard(
         List of MHSScore ORM objects serialised as ScoreResponse.
     """
     result = await db.scalars(
-        select(MHSScore)
-        .order_by(desc(MHSScore.total_score))
-        .limit(min(limit, 100))
-        .offset(offset)
+        select(MHSScore).order_by(desc(MHSScore.total_score)).limit(min(limit, 100)).offset(offset)
     )
     return list(result)
 

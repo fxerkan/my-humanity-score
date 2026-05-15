@@ -70,9 +70,7 @@ def create_access_token(subject: str, extra: dict[str, Any] | None = None) -> st
     Returns:
         Encoded JWT string.
     """
-    expire = datetime.now(UTC) + timedelta(
-        minutes=settings.jwt_access_token_expire_minutes
-    )
+    expire = datetime.now(UTC) + timedelta(minutes=settings.jwt_access_token_expire_minutes)
     payload: dict[str, Any] = {"sub": subject, "exp": expire, "type": "access"}
     if extra:
         payload.update(extra)
@@ -92,9 +90,7 @@ def create_refresh_token(subject: str) -> str:
     Returns:
         Encoded JWT string.
     """
-    expire = datetime.now(UTC) + timedelta(
-        days=settings.jwt_refresh_token_expire_days
-    )
+    expire = datetime.now(UTC) + timedelta(days=settings.jwt_refresh_token_expire_days)
     payload: dict[str, Any] = {
         "sub": subject,
         "exp": expire,
@@ -211,5 +207,5 @@ async def consume_refresh_token(
     Returns:
         True if the token existed (was valid), False if already used/expired.
     """
-    result = await redis_client.eval(_LUA_CONSUME, 1, _token_key(jti))
+    result = await redis_client.eval(_LUA_CONSUME, 1, _token_key(jti))  # type: ignore[misc]
     return bool(result)

@@ -99,6 +99,7 @@ async def db_session() -> AsyncGenerator[AsyncSession, None]:
 
 # ── In-memory Redis mock for unit/integration tests ──────────────────────────
 
+
 class FakeRedis:
     """Minimal in-memory Redis mock that supports setex, delete, and exists."""
 
@@ -159,9 +160,7 @@ async def client(
 
     app.dependency_overrides[get_db] = _override_get_db
     app.dependency_overrides[get_redis_dep] = _override_get_redis
-    async with AsyncClient(
-        transport=ASGITransport(app=app), base_url="http://test"
-    ) as ac:
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
         yield ac
     app.dependency_overrides.clear()
 

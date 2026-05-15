@@ -27,20 +27,28 @@ def recalculate_score(self, user_id: str) -> dict[str, object]:
         user_id: UUID string of the user whose score should be updated.
 
     Returns:
-        Dict with user_id and new total_score.
+        Dict with user_id and new final_score.
     """
+    import asyncio
+
     from services.score_calculator import MHSCalculator
 
     logger.info("recalculate_score started for user_id=%s", user_id)
     try:
         calculator = MHSCalculator()
-        result = calculator.calculate(uuid.UUID(user_id))
+
+        from services.score_calculator import ScoreResult
+
+        async def _run() -> ScoreResult:
+            return await calculator.calculate(uuid.UUID(user_id))
+
+        result = asyncio.run(_run())
         logger.info(
             "recalculate_score completed user_id=%s score=%.2f",
             user_id,
-            result["total_score"],
+            result.final_score,
         )
-        return result
+        return {"user_id": user_id, "final_score": result.final_score}
     except Exception as exc:
         logger.warning("recalculate_score failed user_id=%s: %s", user_id, exc)
         raise self.retry(exc=exc)

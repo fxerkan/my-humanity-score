@@ -26,9 +26,7 @@ async def _register_and_login(client: AsyncClient) -> tuple[dict, str]:
 async def test_get_me_returns_own_profile(client: AsyncClient) -> None:
     """GET /users/me with valid token returns the authenticated user's profile."""
     user_data, token = await _register_and_login(client)
-    resp = await client.get(
-        "/users/me", headers={"Authorization": f"Bearer {token}"}
-    )
+    resp = await client.get("/users/me", headers={"Authorization": f"Bearer {token}"})
     assert resp.status_code == 200
     data = resp.json()
     assert data["id"] == user_data["id"]

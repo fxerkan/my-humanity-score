@@ -94,7 +94,11 @@ async def login(
         HTTPException 403: If the account is disabled.
     """
     user = await db.scalar(select(User).where(User.email == body.email))
-    if not user or not user.hashed_password or not verify_password(body.password, user.hashed_password):
+    if (
+        not user
+        or not user.hashed_password
+        or not verify_password(body.password, user.hashed_password)
+    ):
         raise HTTPException(status_code=401, detail="Invalid credentials")
     if not user.is_active:
         raise HTTPException(status_code=403, detail="Account is disabled")

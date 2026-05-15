@@ -11,6 +11,9 @@ target-version = "py312"
 select = ["E", "F", "I", "UP"]
 ignore = ["E501"]
 
+[tool.ruff.lint.isort]
+known-first-party = ["core", "models", "schemas", "services", "routers", "tasks", "graph", "celery_app"]
+
 [tool.mypy]
 python_version = "3.12"
 strict = false
@@ -20,6 +23,7 @@ exclude = ["alembic/"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "--tb=short"
 # Run with coverage: pytest --cov=. --cov-report=term-missing
 # (coverage flags are omitted here so pytest works without pytest-cov installed locally)

@@ -28,9 +28,9 @@ MIN_SCORE: float = 0.0
 # ── Carbon penalty thresholds (kg CO2/year) ─────────────────────────────────
 _CARBON_THRESHOLDS: list[tuple[float, float]] = [
     (10_000, 100.0),
-    (5_000,   70.0),
-    (1_000,   40.0),
-    (0,        0.0),
+    (5_000, 70.0),
+    (1_000, 40.0),
+    (0, 0.0),
 ]
 MAX_CARBON_PENALTY: float = 100.0
 
@@ -113,8 +113,7 @@ def compute_score(inp: ScoreInput) -> ScoreResult:
     """
     # 1. Weighted category sum (each raw value already in 0–category_max range)
     category_totals: dict[str, float] = {
-        cat: getattr(inp, cat) * weight
-        for cat, weight in CATEGORY_WEIGHTS.items()
+        cat: getattr(inp, cat) * weight for cat, weight in CATEGORY_WEIGHTS.items()
     }
     base_score = sum(category_totals.values())
 
@@ -221,15 +220,17 @@ def _toxicity_bucket(toxicity_index: float) -> str:
 class MHSCalculator:
     """Thin ORM wrapper around the pure compute_score() function.
 
-    Fetches activity data from the database, builds a ScoreInput,
-    calls compute_score(), and persists the result.
+    Fetches activity data from the database and the network multiplier
+    from Neo4j, builds a ScoreInput, calls compute_score(), and
+    persists the result.
     """
 
-    def calculate(self, user_id: uuid.UUID) -> ScoreResult:
+    async def calculate(self, user_id: uuid.UUID) -> ScoreResult:
         """Calculate the MHS score for a user.
 
-        This is a synchronous stub — real aggregation queries implemented
-        when activities API (TASK-010) and verification pipeline are complete.
+        Aggregates activity category scores from PostgreSQL and the
+        network multiplier from Neo4j, then delegates to the pure
+        ``compute_score()`` function.
 
         Args:
             user_id: UUID of the user to score.
@@ -237,8 +238,13 @@ class MHSCalculator:
         Returns:
             ScoreResult dataclass (no raw hidden-factor values).
         """
-        # Stub input — real query aggregation in TASK-010
-        inp = ScoreInput()
+        from services.network_multiplier import calculate_network_multiplier
+
+        # Query network multiplier from Neo4j (returns 1.0 if unavailable)
+        nm = await calculate_network_multiplier(str(user_id))
+
+        # Stub input for categories — real aggregation in TASK-010
+        inp = ScoreInput(network_multiplier=nm)
         return compute_score(inp)
 
     @staticmethod

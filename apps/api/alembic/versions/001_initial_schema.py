@@ -32,8 +32,18 @@ def upgrade() -> None:
         sa.Column("is_active", sa.Boolean(), server_default="true", nullable=False),
         sa.Column("is_verified", sa.Boolean(), server_default="false", nullable=False),
         sa.Column("is_admin", sa.Boolean(), server_default="false", nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.Column("deleted_at", sa.TIMESTAMP(timezone=True), nullable=True),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -55,10 +65,19 @@ def upgrade() -> None:
         sa.Column("carbon_penalty", sa.Numeric(5, 2), server_default="0", nullable=False),
         sa.Column("toxicity_penalty", sa.Numeric(5, 2), server_default="0", nullable=False),
         sa.Column("network_multiplier", sa.Numeric(4, 3), server_default="1.000", nullable=False),
-        sa.Column("consistency_multiplier", sa.Numeric(4, 3), server_default="1.000", nullable=False),
-        sa.Column("geo_equity_multiplier", sa.Numeric(4, 3), server_default="1.000", nullable=False),
+        sa.Column(
+            "consistency_multiplier", sa.Numeric(4, 3), server_default="1.000", nullable=False
+        ),
+        sa.Column(
+            "geo_equity_multiplier", sa.Numeric(4, 3), server_default="1.000", nullable=False
+        ),
         sa.Column("score_level", sa.String(30), server_default="awakening", nullable=False),
-        sa.Column("calculated_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "calculated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -80,8 +99,18 @@ def upgrade() -> None:
         sa.Column("status", sa.String(30), server_default="pending", nullable=False),
         sa.Column("verification_level", sa.Integer(), server_default="0", nullable=False),
         sa.Column("activity_date", sa.Date(), nullable=True),
-        sa.Column("created_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -102,7 +131,12 @@ def upgrade() -> None:
         sa.Column("token_expires_at", sa.TIMESTAMP(timezone=True), nullable=True),
         sa.Column("is_active", sa.Boolean(), server_default="true", nullable=False),
         sa.Column("last_synced_at", sa.TIMESTAMP(timezone=True), nullable=True),
-        sa.Column("created_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
         sa.UniqueConstraint("user_id", "platform", name="uq_user_platform"),
@@ -117,7 +151,12 @@ def upgrade() -> None:
         sa.Column("badge_type", sa.String(50), nullable=False),
         sa.Column("badge_code", sa.String(50), nullable=False),
         sa.Column("badge_layer", sa.Integer(), nullable=False),
-        sa.Column("awarded_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "awarded_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.Column("metadata", sa.JSON(), nullable=True),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("id"),
@@ -138,8 +177,18 @@ def upgrade() -> None:
         sa.Column("collective_score", sa.Numeric(7, 2), server_default="0", nullable=False),
         sa.Column("member_count", sa.Integer(), server_default="0", nullable=False),
         sa.Column("is_active", sa.Boolean(), server_default="true", nullable=False),
-        sa.Column("created_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
-        sa.Column("updated_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "created_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
+        sa.Column(
+            "updated_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["owner_id"], ["users.id"], ondelete="RESTRICT"),
         sa.PrimaryKeyConstraint("id"),
     )
@@ -152,7 +201,12 @@ def upgrade() -> None:
         sa.Column("group_id", sa.UUID(), nullable=False),
         sa.Column("user_id", sa.UUID(), nullable=False),
         sa.Column("role", sa.String(20), server_default="member", nullable=False),
-        sa.Column("joined_at", sa.TIMESTAMP(timezone=True), server_default=sa.text("now()"), nullable=False),
+        sa.Column(
+            "joined_at",
+            sa.TIMESTAMP(timezone=True),
+            server_default=sa.text("now()"),
+            nullable=False,
+        ),
         sa.ForeignKeyConstraint(["group_id"], ["groups.id"], ondelete="CASCADE"),
         sa.ForeignKeyConstraint(["user_id"], ["users.id"], ondelete="CASCADE"),
         sa.PrimaryKeyConstraint("group_id", "user_id"),

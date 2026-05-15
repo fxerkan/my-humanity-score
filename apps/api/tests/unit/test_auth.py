@@ -16,6 +16,7 @@ from core.security import (
 
 # ── Password hashing ──────────────────────────────────────────────────────────
 
+
 def test_hash_password_returns_bcrypt_hash() -> None:
     h = hash_password("secret123")
     assert h.startswith("$2b$") or h.startswith("$2a$")
@@ -38,6 +39,7 @@ def test_hash_different_for_same_input() -> None:
 
 
 # ── JWT access token ──────────────────────────────────────────────────────────
+
 
 def test_create_access_token_returns_string() -> None:
     token = create_access_token("user-abc")
@@ -62,6 +64,7 @@ def test_access_token_has_expiry() -> None:
 
 # ── JWT refresh token ─────────────────────────────────────────────────────────
 
+
 def test_create_refresh_token_type_is_refresh() -> None:
     token = create_refresh_token("user-xyz")
     payload = decode_token(token)
@@ -77,6 +80,7 @@ def test_refresh_token_longer_expiry_than_access() -> None:
 
 
 # ── Expired / tampered token rejection ───────────────────────────────────────
+
 
 def test_decode_invalid_token_raises() -> None:
     with pytest.raises(ValueError, match="Invalid token"):

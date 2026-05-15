@@ -47,9 +47,7 @@ def verify_activity(self, activity_id: str) -> dict[str, object]:
 
     async def _run_pipeline() -> dict[str, object]:
         async with AsyncSessionLocal() as db:
-            activity = await db.scalar(
-                select(Activity).where(Activity.id == activity_uuid)
-            )
+            activity = await db.scalar(select(Activity).where(Activity.id == activity_uuid))
             if not activity:
                 logger.warning("verify_activity: activity %s not found", activity_id)
                 return {"activity_id": activity_id, "status": "not_found"}
@@ -103,7 +101,10 @@ def _auto_verify(activity: object) -> int:
     level = 0
     if getattr(activity, "evidence_url", None):
         level += 1
-    if getattr(activity, "description", None) and len(getattr(activity, "description", "") or "") > 50:
+    if (
+        getattr(activity, "description", None)
+        and len(getattr(activity, "description", "") or "") > 50
+    ):
         level += 1
     if getattr(activity, "activity_date", None):
         level += 1

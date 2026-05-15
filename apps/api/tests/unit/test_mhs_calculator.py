@@ -3,6 +3,7 @@
 import random
 import uuid
 from decimal import Decimal
+from typing import Any
 
 import pytest
 
@@ -16,9 +17,10 @@ from services.score_calculator import (
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
+
 def _full_inp(**overrides: float) -> ScoreInput:
     """Return a ScoreInput with all categories at 500 (mid-range) + overrides."""
-    base = {
+    base: dict[str, Any] = {
         "social_impact": 500.0,
         "environmental": 500.0,
         "knowledge_innovation": 500.0,
@@ -32,6 +34,7 @@ def _full_inp(**overrides: float) -> ScoreInput:
 
 # ── Zero score ────────────────────────────────────────────────────────────────
 
+
 def test_zero_score_for_empty_input() -> None:
     """User with no activities has a final score of 0."""
     result = compute_score(ScoreInput())
@@ -40,6 +43,7 @@ def test_zero_score_for_empty_input() -> None:
 
 
 # ── All categories populated ──────────────────────────────────────────────────
+
 
 def test_score_with_all_categories() -> None:
     """Score with all categories populated is > 0 and <= 1000."""
@@ -52,15 +56,16 @@ def test_score_with_all_categories() -> None:
 
 # ── Carbon penalty thresholds ─────────────────────────────────────────────────
 
+
 @pytest.mark.parametrize(
     "kg, no_penalty_score, has_penalty",
     [
         (0, True, False),
         (999, True, False),
-        (1000, False, True),   # medium penalty applied
-        (5000, False, True),   # high penalty applied
-        (10_000, False, True), # max penalty applied
-        (20_000, False, True), # capped at max
+        (1000, False, True),  # medium penalty applied
+        (5000, False, True),  # high penalty applied
+        (10_000, False, True),  # max penalty applied
+        (20_000, False, True),  # capped at max
     ],
 )
 def test_carbon_penalty_reduces_score(kg: float, no_penalty_score: bool, has_penalty: bool) -> None:
@@ -75,12 +80,13 @@ def test_carbon_penalty_reduces_score(kg: float, no_penalty_score: bool, has_pen
 
 # ── Toxicity penalty reduces score ───────────────────────────────────────────
 
+
 @pytest.mark.parametrize(
     "toxicity, has_penalty",
     [
         (0.0, False),
         (0.49, False),
-        (0.5, True),   # medium toxicity → penalty
+        (0.5, True),  # medium toxicity → penalty
         (0.85, True),  # high toxicity → max penalty
         (1.0, True),
     ],
@@ -97,6 +103,7 @@ def test_toxicity_penalty_reduces_score(toxicity: float, has_penalty: bool) -> N
 
 # ── Network multiplier ────────────────────────────────────────────────────────
 
+
 def test_network_multiplier_neutral() -> None:
     base = compute_score(_full_inp())
     with_mult = compute_score(_full_inp(network_multiplier=1.0))
@@ -111,6 +118,7 @@ def test_network_multiplier_capped_at_1_5() -> None:
 
 
 # ── Score bounds (fuzz) ───────────────────────────────────────────────────────
+
 
 def test_score_never_below_zero_or_above_1000() -> None:
     """Random inputs must always produce a score in [0, 1000]."""
@@ -130,12 +138,13 @@ def test_score_never_below_zero_or_above_1000() -> None:
             geo_equity_multiplier=rng.uniform(0.5, 5.0),
         )
         result = compute_score(inp)
-        assert MIN_SCORE <= result.final_score <= MAX_SCORE, (
-            f"Score {result.final_score} out of range for input {inp}"
-        )
+        assert (
+            MIN_SCORE <= result.final_score <= MAX_SCORE
+        ), f"Score {result.final_score} out of range for input {inp}"
 
 
 # ── Level assignment ──────────────────────────────────────────────────────────
+
 
 @pytest.mark.parametrize(
     "total, expected_level",
@@ -165,12 +174,12 @@ def test_score_levels(total: float, expected_level: str) -> None:
     inp = ScoreInput(social_impact=raw)
     result = compute_score(inp)
     assert result.level == expected_level, (
-        f"Total={result.final_score:.1f} → level={result.level!r}, "
-        f"expected={expected_level!r}"
+        f"Total={result.final_score:.1f} → level={result.level!r}, " f"expected={expected_level!r}"
     )
 
 
 # ── MHSCalculator wrapper ─────────────────────────────────────────────────────
+
 
 def test_mhs_calculator_compute_passthrough() -> None:
     """MHSCalculator.compute() delegates to compute_score correctly."""
@@ -181,11 +190,16 @@ def test_mhs_calculator_compute_passthrough() -> None:
     assert via_calc.level == direct.level
 
 
-def test_mhs_calculator_calculate_returns_score_result() -> None:
+@pytest.mark.asyncio
+async def test_mhs_calculator_calculate_returns_score_result() -> None:
     """MHSCalculator.calculate() returns a ScoreResult dataclass with AC-spec field names."""
+    from unittest.mock import patch
+
     from services.score_calculator import ScoreResult
+
     calc = MHSCalculator()
-    result = calc.calculate(uuid.uuid4())
+    with patch("services.network_multiplier.calculate_network_multiplier", return_value=1.0):
+        result = await calc.calculate(uuid.uuid4())
     assert isinstance(result, ScoreResult)
     # AC-required field names
     assert hasattr(result, "final_score")
@@ -200,10 +214,14 @@ def test_mhs_calculator_calculate_returns_score_result() -> None:
     assert not hasattr(result, "toxicity_penalty")
 
 
-def test_mhs_calculator_calculate_zero_score_for_stub() -> None:
+@pytest.mark.asyncio
+async def test_mhs_calculator_calculate_zero_score_for_stub() -> None:
     """MHSCalculator.calculate() returns 0.0 when no activities exist (stub)."""
+    from unittest.mock import patch
+
     calc = MHSCalculator()
-    result = calc.calculate(uuid.uuid4())
+    with patch("services.network_multiplier.calculate_network_multiplier", return_value=1.0):
+        result = await calc.calculate(uuid.uuid4())
     assert result.final_score == 0.0
     assert result.level == "awakening"
 
@@ -222,6 +240,7 @@ def test_mhs_calculator_score_from_decimal_zero() -> None:
 
 # ── Hidden factors never exposed raw ──────────────────────────────────────────
 
+
 def test_score_result_contains_buckets_not_raw_values() -> None:
     """ScoreResult exposes only bucket strings — no raw hidden factor values."""
     inp = ScoreInput(carbon_kg_per_year=12_000, toxicity_index=0.9)
@@ -237,6 +256,7 @@ def test_score_result_contains_buckets_not_raw_values() -> None:
 
 
 # ── Max score boundary ────────────────────────────────────────────────────────
+
 
 def test_max_score_clamped_at_1000() -> None:
     """Even with extreme inputs and best multipliers, score never exceeds 1000."""
@@ -256,6 +276,7 @@ def test_max_score_clamped_at_1000() -> None:
 
 
 # ── Carbon bucket boundaries ──────────────────────────────────────────────────
+
 
 @pytest.mark.parametrize(
     "kg, expected_bucket",
@@ -278,6 +299,7 @@ def test_carbon_bucket_values(kg: float, expected_bucket: str) -> None:
 
 
 # ── Toxicity bucket boundaries ────────────────────────────────────────────────
+
 
 @pytest.mark.parametrize(
     "toxicity, expected_bucket",
