@@ -59,7 +59,7 @@ jobs:
         run: alembic upgrade head
 
       - name: Pytest + coverage
-        run: pytest -v --cov=. --cov-report=term-missing
+        run: PYTHONPATH=. pytest -v --cov=. --cov-report=term-missing
 
   # ── Web: lint + typecheck + build ─────────────────────────────────────────
   web:
