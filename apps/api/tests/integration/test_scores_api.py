@@ -133,14 +133,15 @@ async def _upsert_score(
 def _assert_no_forbidden_fields(data: dict) -> None:
     """Recursively assert that no forbidden raw-value field names appear."""
     for key, value in data.items():
-        assert key not in _FORBIDDEN_RAW_FIELDS, (
-            f"Forbidden raw field '{key}' found in API response"
-        )
+        assert (
+            key not in _FORBIDDEN_RAW_FIELDS
+        ), f"Forbidden raw field '{key}' found in API response"
         if isinstance(value, dict):
             _assert_no_forbidden_fields(value)
 
 
 # ── GET /scores/{username} (public) ───────────────────────────────────────────
+
 
 async def test_public_score_returns_summary(
     client: AsyncClient,
@@ -228,6 +229,7 @@ async def test_public_score_no_forbidden_raw_fields(
 
 
 # ── GET /scores/me/breakdown (auth required) ──────────────────────────────────
+
 
 async def test_breakdown_requires_auth(client: AsyncClient) -> None:
     """AC #2 — GET /scores/me/breakdown without token returns 401."""
@@ -324,9 +326,9 @@ async def test_breakdown_contribution_equals_score_times_weight(
     assert resp.status_code == 200
     for cat, detail in resp.json()["categories"].items():
         expected = round(detail["score"] * detail["weight"], 2)
-        assert abs(detail["contribution"] - expected) < 0.01, (
-            f"{cat}: contribution {detail['contribution']} != score*weight {expected}"
-        )
+        assert (
+            abs(detail["contribution"] - expected) < 0.01
+        ), f"{cat}: contribution {detail['contribution']} != score*weight {expected}"
 
 
 async def test_breakdown_hidden_adjustments_use_allowed_buckets(
@@ -346,7 +348,9 @@ async def test_breakdown_hidden_adjustments_use_allowed_buckets(
     adj = resp.json()["hidden_adjustments"]
 
     assert adj["carbon_bucket"] in _CARBON_BUCKETS, f"Bad carbon_bucket: {adj['carbon_bucket']}"
-    assert adj["toxicity_bucket"] in _TOXICITY_BUCKETS, f"Bad toxicity_bucket: {adj['toxicity_bucket']}"
+    assert (
+        adj["toxicity_bucket"] in _TOXICITY_BUCKETS
+    ), f"Bad toxicity_bucket: {adj['toxicity_bucket']}"
     assert adj["network_effect"] in _NETWORK_EFFECTS, f"Bad network_effect: {adj['network_effect']}"
     assert adj["consistency"] in _CONSISTENCY_BUCKETS, f"Bad consistency: {adj['consistency']}"
     assert isinstance(adj["equity_boost"], bool), "equity_boost must be a boolean"
@@ -389,6 +393,7 @@ async def test_breakdown_level_has_name_and_emoji(
 
 
 # ── POST /scores/me/recalculate ───────────────────────────────────────────────
+
 
 async def test_recalculate_requires_auth(client: AsyncClient) -> None:
     """POST /scores/me/recalculate without token returns 401."""
@@ -435,6 +440,7 @@ async def test_recalculate_task_id_contains_user_id(
 
 # ── GET /scores/leaderboard (public) ─────────────────────────────────────────
 
+
 async def test_leaderboard_is_public(client: AsyncClient) -> None:
     """GET /scores/leaderboard requires no authentication."""
     resp = await client.get("/scores/leaderboard")
@@ -449,6 +455,7 @@ async def test_leaderboard_returns_list(client: AsyncClient) -> None:
 
 
 # ── Global percentile ─────────────────────────────────────────────────────────
+
 
 async def test_public_score_global_percentile_two_users(
     client: AsyncClient,

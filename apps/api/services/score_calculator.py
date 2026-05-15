@@ -28,9 +28,9 @@ MIN_SCORE: float = 0.0
 # ── Carbon penalty thresholds (kg CO2/year) ─────────────────────────────────
 _CARBON_THRESHOLDS: list[tuple[float, float]] = [
     (10_000, 100.0),
-    (5_000,   70.0),
-    (1_000,   40.0),
-    (0,        0.0),
+    (5_000, 70.0),
+    (1_000, 40.0),
+    (0, 0.0),
 ]
 MAX_CARBON_PENALTY: float = 100.0
 
@@ -113,8 +113,7 @@ def compute_score(inp: ScoreInput) -> ScoreResult:
     """
     # 1. Weighted category sum (each raw value already in 0–category_max range)
     category_totals: dict[str, float] = {
-        cat: getattr(inp, cat) * weight
-        for cat, weight in CATEGORY_WEIGHTS.items()
+        cat: getattr(inp, cat) * weight for cat, weight in CATEGORY_WEIGHTS.items()
     }
     base_score = sum(category_totals.values())
 

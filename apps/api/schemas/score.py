@@ -24,6 +24,7 @@ from pydantic import BaseModel, Field
 
 # ── Allowed enum values for hidden adjustment buckets ────────────────────────
 
+
 class CarbonBucket(str, Enum):
     """Client-safe carbon footprint bucket.  Raw kg CO2 values are never exposed."""
 
@@ -60,13 +61,13 @@ class ConsistencyBucket(str, Enum):
 # ── Level metadata ────────────────────────────────────────────────────────────
 
 LEVEL_METADATA: dict[str, dict] = {
-    "awakening":           {"name": "Awakening",          "emoji": "🌱", "range": [0, 99]},
-    "rising_star":         {"name": "Rising Star",         "emoji": "🌟", "range": [100, 249]},
-    "contributor":         {"name": "Contributor",         "emoji": "💫", "range": [250, 399]},
-    "impact_maker":        {"name": "Impact Maker",        "emoji": "⭐", "range": [400, 549]},
-    "change_agent":        {"name": "Change Agent",        "emoji": "🏆", "range": [550, 699]},
-    "humanity_champion":   {"name": "Humanity Champion",   "emoji": "🌍", "range": [700, 849]},
-    "humanity_legend":     {"name": "Humanity Legend",     "emoji": "👑", "range": [850, 1000]},
+    "awakening": {"name": "Awakening", "emoji": "🌱", "range": [0, 99]},
+    "rising_star": {"name": "Rising Star", "emoji": "🌟", "range": [100, 249]},
+    "contributor": {"name": "Contributor", "emoji": "💫", "range": [250, 399]},
+    "impact_maker": {"name": "Impact Maker", "emoji": "⭐", "range": [400, 549]},
+    "change_agent": {"name": "Change Agent", "emoji": "🏆", "range": [550, 699]},
+    "humanity_champion": {"name": "Humanity Champion", "emoji": "🌍", "range": [700, 849]},
+    "humanity_legend": {"name": "Humanity Legend", "emoji": "👑", "range": [850, 1000]},
 }
 
 
@@ -83,6 +84,7 @@ def level_info(slug: str) -> dict:
 
 
 # ── Helper: map ORM multiplier floats to client-safe buckets ──────────────────
+
 
 def _network_bucket(multiplier: Decimal) -> NetworkEffect:
     """Convert a raw network multiplier to a client-safe enum bucket.
@@ -160,6 +162,7 @@ def _toxicity_bucket_from_penalty(penalty: Decimal) -> ToxicityBucket:
 
 # ── Existing schemas (kept for backward compatibility) ────────────────────────
 
+
 class ScoreResponse(BaseModel):
     """Raw ORM-level score response (used by /users/me/score and leaderboard).
 
@@ -194,6 +197,7 @@ class ScoreSummary(BaseModel):
 
 
 # ── New TASK-8 schemas ────────────────────────────────────────────────────────
+
 
 class LevelInfo(BaseModel):
     """Human-readable level metadata."""

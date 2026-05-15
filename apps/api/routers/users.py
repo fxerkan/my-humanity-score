@@ -23,7 +23,6 @@ class InspireRequest(BaseModel):
     inspiration_username: str
 
 
-
 async def _get_user_or_404(user_id: uuid.UUID, db: AsyncSession) -> User:
     """Fetch a user by primary key or raise 404."""
     user = await db.scalar(select(User).where(User.id == user_id))
@@ -35,9 +34,7 @@ async def _get_user_or_404(user_id: uuid.UUID, db: AsyncSession) -> User:
 async def _latest_score(user_id: uuid.UUID, db: AsyncSession) -> MHSScore | None:
     """Return the most recent MHSScore for a user, or None."""
     return await db.scalar(
-        select(MHSScore)
-        .where(MHSScore.user_id == user_id)
-        .order_by(desc(MHSScore.calculated_at))
+        select(MHSScore).where(MHSScore.user_id == user_id).order_by(desc(MHSScore.calculated_at))
     )
 
 
@@ -140,9 +137,7 @@ async def inspire_me(
         raise HTTPException(status_code=400, detail="inspiration_username is required")
 
     # Look up the target user in PostgreSQL
-    target_user = await db.scalar(
-        select(User).where(User.username == body.inspiration_username)
-    )
+    target_user = await db.scalar(select(User).where(User.username == body.inspiration_username))
     if not target_user:
         raise HTTPException(status_code=404, detail="Inspiration user not found")
 
