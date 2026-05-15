@@ -23,6 +23,7 @@ exclude = ["alembic/"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "--tb=short"
 # Run with coverage: pytest --cov=. --cov-report=term-missing
 # (coverage flags are omitted here so pytest works without pytest-cov installed locally)
