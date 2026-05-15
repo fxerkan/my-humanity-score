@@ -207,5 +207,5 @@ async def consume_refresh_token(
     Returns:
         True if the token existed (was valid), False if already used/expired.
     """
-    result = await redis_client.eval(_LUA_CONSUME, 1, _token_key(jti))
+    result = await redis_client.eval(_LUA_CONSUME, 1, _token_key(jti))  # type: ignore[misc]
     return bool(result)

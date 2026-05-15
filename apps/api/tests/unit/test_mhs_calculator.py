@@ -3,6 +3,7 @@
 import random
 import uuid
 from decimal import Decimal
+from typing import Any
 
 import pytest
 
@@ -19,7 +20,7 @@ from services.score_calculator import (
 
 def _full_inp(**overrides: float) -> ScoreInput:
     """Return a ScoreInput with all categories at 500 (mid-range) + overrides."""
-    base = {
+    base: dict[str, Any] = {
         "social_impact": 500.0,
         "environmental": 500.0,
         "knowledge_innovation": 500.0,

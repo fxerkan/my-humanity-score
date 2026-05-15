@@ -5,6 +5,7 @@ Neo4j is mocked — NO real database connection required.
 
 from __future__ import annotations
 
+import uuid
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -218,7 +219,7 @@ async def test_calculator_uses_network_multiplier() -> None:
         "services.network_multiplier.calculate_network_multiplier",
         return_value=1.0,
     ):
-        result_neutral = await calc.calculate("user-1")
+        result_neutral = await calc.calculate(uuid.UUID("00000000-0000-0000-0000-000000000001"))
         assert 0.0 <= result_neutral.final_score <= 1000.0
 
     # Max multiplier (1.5)
@@ -226,7 +227,7 @@ async def test_calculator_uses_network_multiplier() -> None:
         "services.network_multiplier.calculate_network_multiplier",
         return_value=_MAX_NETWORK_MULTIPLIER,
     ):
-        result_max = await calc.calculate("user-2")
+        result_max = await calc.calculate(uuid.UUID("00000000-0000-0000-0000-000000000002"))
         assert 0.0 <= result_max.final_score <= 1000.0
 
     # Pure function: verify multiplier > 1.0 increases score

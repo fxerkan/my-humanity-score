@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
     retry_jitter=True,
     soft_time_limit=30,
 )
-def guardian_analyze(self, content: str, user_id: str) -> dict[str, object]:
+def guardian_analyze(self, content: str, user_id: str) -> dict[str, str]:
     """Async Guardian check — analyse content for toxicity/ethics violations.
 
     Raw toxicity score is NEVER returned to the client; only a bucket

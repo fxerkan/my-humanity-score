@@ -11,6 +11,7 @@ Or from the project root (if API port is mapped to 8001):
 import asyncio
 import sys
 from decimal import Decimal
+from typing import Any, cast
 
 # Add the API source root to the path so imports work.
 sys.path.insert(0, "/app")
@@ -141,7 +142,7 @@ async def seed(session: AsyncSession) -> None:
         session.add(user)
         await session.flush()  # get user.id
 
-        score_data = data["score"]
+        score_data = cast(dict[str, Any], data["score"])
         score = MHSScore(
             user_id=user.id,
             total_score=score_data["total_score"],

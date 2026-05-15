@@ -37,7 +37,9 @@ def recalculate_score(self, user_id: str) -> dict[str, object]:
     try:
         calculator = MHSCalculator()
 
-        async def _run() -> object:
+        from services.score_calculator import ScoreResult
+
+        async def _run() -> ScoreResult:
             return await calculator.calculate(uuid.UUID(user_id))
 
         result = asyncio.run(_run())

@@ -11,7 +11,7 @@ import logging
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
-from neo4j import AsyncGraphDatabase
+from neo4j import AsyncDriver, AsyncGraphDatabase
 from neo4j.exceptions import Neo4jError, ServiceUnavailable
 
 from core.config import settings
@@ -20,10 +20,10 @@ logger = logging.getLogger(__name__)
 
 # ── Module-level driver (singleton) ──────────────────────────────────────────
 
-_driver: AsyncGraphDatabase.driver | None = None
+_driver: AsyncDriver | None = None
 
 
-def _create_driver() -> AsyncGraphDatabase.driver:
+def _create_driver() -> AsyncDriver:
     """Build an async Neo4j driver from Settings."""
     return AsyncGraphDatabase.driver(
         settings.neo4j_uri,
@@ -34,7 +34,7 @@ def _create_driver() -> AsyncGraphDatabase.driver:
     )
 
 
-async def get_neo4j_driver() -> AsyncGraphDatabase.driver:
+async def get_neo4j_driver() -> AsyncDriver:
     """Return the shared driver, creating it on first call."""
     global _driver
     if _driver is None:
@@ -42,7 +42,7 @@ async def get_neo4j_driver() -> AsyncGraphDatabase.driver:
     return _driver
 
 
-def set_neo4j_driver(driver: AsyncGraphDatabase.driver | None) -> None:
+def set_neo4j_driver(driver: AsyncDriver | None) -> None:
     """Override the module-level driver (used in tests)."""
     global _driver
     _driver = driver
