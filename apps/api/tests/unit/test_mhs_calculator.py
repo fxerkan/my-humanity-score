@@ -181,11 +181,18 @@ def test_mhs_calculator_compute_passthrough() -> None:
     assert via_calc.level == direct.level
 
 
-def test_mhs_calculator_calculate_returns_score_result() -> None:
+@pytest.mark.asyncio
+async def test_mhs_calculator_calculate_returns_score_result() -> None:
     """MHSCalculator.calculate() returns a ScoreResult dataclass with AC-spec field names."""
+    from unittest.mock import patch
+
     from services.score_calculator import ScoreResult
+
     calc = MHSCalculator()
-    result = calc.calculate(uuid.uuid4())
+    with patch(
+        "services.network_multiplier.calculate_network_multiplier", return_value=1.0
+    ):
+        result = await calc.calculate(uuid.uuid4())
     assert isinstance(result, ScoreResult)
     # AC-required field names
     assert hasattr(result, "final_score")
@@ -200,10 +207,16 @@ def test_mhs_calculator_calculate_returns_score_result() -> None:
     assert not hasattr(result, "toxicity_penalty")
 
 
-def test_mhs_calculator_calculate_zero_score_for_stub() -> None:
+@pytest.mark.asyncio
+async def test_mhs_calculator_calculate_zero_score_for_stub() -> None:
     """MHSCalculator.calculate() returns 0.0 when no activities exist (stub)."""
+    from unittest.mock import patch
+
     calc = MHSCalculator()
-    result = calc.calculate(uuid.uuid4())
+    with patch(
+        "services.network_multiplier.calculate_network_multiplier", return_value=1.0
+    ):
+        result = await calc.calculate(uuid.uuid4())
     assert result.final_score == 0.0
     assert result.level == "awakening"
 

@@ -3,6 +3,7 @@
 import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy import desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -16,6 +17,11 @@ from schemas.score import ScoreResponse
 from schemas.user import UserPublicResponse, UserResponse, UserUpdate
 
 router = APIRouter(prefix="/users", tags=["users"])
+
+
+class InspireRequest(BaseModel):
+    inspiration_username: str
+
 
 
 async def _get_user_or_404(user_id: uuid.UUID, db: AsyncSession) -> User:
@@ -87,6 +93,101 @@ async def get_my_activities(
         .offset(offset)
     )
     return list(result)
+
+
+class InspireResponse(BaseModel):
+    """Confirmation that an inspiration was recorded."""
+
+    message: str
+    follower_id: str
+    inspiration_id: str
+
+
+class RemoveInspireResponse(BaseModel):
+    """Confirmation that an inspiration was removed."""
+
+    message: str
+    deleted: bool
+
+
+@router.post("/me/inspire", response_model=InspireResponse, status_code=201)
+async def inspire_me(
+    body: InspireRequest,
+    current_user_id: uuid.UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+) -> InspireResponse:
+    """Declare that the authenticated user was inspired by another user.
+
+    Creates an ``INSPIRED_BY`` edge in the Neo4j graph from the
+    authenticated user to the inspiration target.  Also ensures both
+    user nodes exist in the graph.
+
+    Args:
+        body: Request containing ``inspiration_username``.
+        current_user_id: UUID from the validated JWT.
+        db: Async database session.
+
+    Returns:
+        InspireResponse with confirmation details.
+
+    Raises:
+        HTTPException 404: If the inspiration target user does not exist.
+        HTTPException 400: If attempting to self-inspire.
+    """
+    from services.network_multiplier import add_inspiration
+
+    if body.inspiration_username == "":
+        raise HTTPException(status_code=400, detail="inspiration_username is required")
+
+    # Look up the target user in PostgreSQL
+    target_user = await db.scalar(
+        select(User).where(User.username == body.inspiration_username)
+    )
+    if not target_user:
+        raise HTTPException(status_code=404, detail="Inspiration user not found")
+
+    follower_id = str(current_user_id)
+    inspiration_id = str(target_user.id)
+
+    try:
+        await add_inspiration(follower_id, inspiration_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    return InspireResponse(
+        message="Inspiration recorded",
+        follower_id=follower_id,
+        inspiration_id=inspiration_id,
+    )
+
+
+@router.delete("/me/inspire/{username}", response_model=RemoveInspireResponse)
+async def remove_inspire_me(
+    username: str,
+    current_user_id: uuid.UUID = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db),
+) -> RemoveInspireResponse:
+    """Remove an inspiration relationship from the authenticated user.
+
+    Args:
+        username: The username of the inspiration to remove.
+        current_user_id: UUID from the validated JWT.
+        db: Async database session.
+
+    Returns:
+        RemoveInspireResponse with deletion status.
+    """
+    from services.network_multiplier import remove_inspiration
+
+    target_user = await db.scalar(select(User).where(User.username == username))
+    if not target_user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    deleted = await remove_inspiration(str(current_user_id), str(target_user.id))
+    return RemoveInspireResponse(
+        message="Inspiration removed" if deleted else "No inspiration found",
+        deleted=deleted,
+    )
 
 
 @router.get("/{username}", response_model=UserPublicResponse)
