@@ -83,13 +83,13 @@ async def neo4j_session() -> AsyncGenerator:
         yield session
 
 
-def neo4j_lifespan() -> list[dict]:
+def neo4j_lifespan() -> list[dict]:  # pragma: no cover
     """Return start‑up / shut‑down events for the Neo4j driver.
 
     Use in FastAPI ``lifespan``::
 
         app = FastAPI(lifespan=neo4j_lifespan)
+
+    Note: Implemented inline in main.py via the lifespan context manager.
     """
-    # FastAPI lifespan expects an async context manager that yields
-    # a state dict.  We return a generator‑based implementation below.  # pragma: no cover — used in main.py
-    pass  # pragma: no cover — implemented inline in main.py
+    return []
