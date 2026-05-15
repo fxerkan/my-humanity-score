@@ -68,6 +68,29 @@ Users build a verifiable **MHS Score (0–1000)** by logging, claiming, and conn
 
 See [`backlog/docs/sprints/pre-mvp-plan.md`](backlog/docs/sprints/pre-mvp-plan.md) for the detailed roadmap.
 
+### Claude Code GitHub Actions
+
+This repository uses **Claude Code GitHub Actions** for AI-powered development assistance:
+
+#### 🤖 Interactive Mode
+Mention `@claude` in any PR or issue comment to:
+- Implement features and fix bugs
+- Create PRs with tests
+- Answer questions about the codebase
+- Refactor and optimize code
+
+#### 🔍 Automatic PR Reviews
+Every PR gets automatically reviewed for:
+- Code quality, security, and performance
+- Test coverage and edge cases
+- MHS-specific ethical considerations (no discrimination logic)
+- Architecture best practices
+
+#### 🎯 Issue Implementation
+Label issues with `claude` to automatically implement features and create PRs.
+
+**Setup:** See [`.github/CLAUDE_CODE_SETUP.md`](.github/CLAUDE_CODE_SETUP.md) for detailed installation instructions.
+
 ### Getting Started (Development)
 
 ```bash
